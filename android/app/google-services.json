@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "635158928930",
+    "project_id": "vando-22877",
+    "storage_bucket": "vando-22877.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:635158928930:android:0ba3d6e20c436bc9eab47b",
+        "android_client_info": {
+          "package_name": "com.example.untitled"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTCBkifquBhgDWShrhqfNrNKLVCEUn0Kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
