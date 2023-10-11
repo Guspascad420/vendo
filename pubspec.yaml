@@ -40,6 +40,9 @@ dependencies:
   firebase_core: ^2.16.0
   cloud_firestore: ^4.9.3
   flutter_rating_bar: ^4.0.1
+  azblob: ^2.6.0
+  xml2json: ^6.2.0
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +84,8 @@ flutter:
     - images/ic_profile.svg
     - images/rectangle_387.png
     - images/shopping_cart.png
+    - images/about_me.svg
+    - images/sign_out.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

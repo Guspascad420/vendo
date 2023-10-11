@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vando/screens/forget_password.dart';
-import 'package:vando/screens/home_screen.dart';
+import 'package:vando/screens/auth/forget_password.dart';
+import 'package:vando/screens/main/main_screen.dart';
 import 'package:vando/utils/reusable_widgets.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -256,7 +256,7 @@ class _CreateAccountState extends State<CreateAccount> {
                 //     ? null:
                 () {
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const HomeScreen()));
+                  MaterialPageRoute(builder: (context) => const MainScreen()));
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF314797),
@@ -348,7 +348,7 @@ class _LoginState extends State<Login> {
                 //     ? null:
                 () {
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const HomeScreen()));
+                  MaterialPageRoute(builder: (context) => const MainScreen()));
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF314797),

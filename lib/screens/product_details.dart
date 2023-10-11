@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../models/product.dart';
 
 class ProductDetails extends StatefulWidget {
@@ -19,12 +19,15 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   void _incrementQuantity() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _quantity++;
+    });
+  }
+
+  void _decrementQuantity() {
+    setState(() {
+      if (_quantity > 0) {
+        _quantity--;
+      }
     });
   }
 
@@ -32,26 +35,81 @@ class _ProductDetailsState extends State<ProductDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(leading: const Icon(Icons.arrow_back)),
-      bottomNavigationBar: Container(
-        color: const Color(0xFF2A4399),
-        child: Row(
-          children: [
-            const Icon(Icons.shopping_bag_outlined),
-            Text('Add to cart',
-                style: GoogleFonts.inter(fontSize: 17, color: Colors.white))
-          ],
-        ),
-      ),
-      body: Column(
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            color: const Color(0xFFF2FFE6),
-            child: Image.asset(widget.product.imageRes),
+            color: const Color(0xFFF4F5F9),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.only(left: 25, top: 5, bottom: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).colorScheme.background),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Quantity',
+                      style: GoogleFonts.inter(fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF868889))),
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            _decrementQuantity();
+                          },
+                          icon: const Icon(Icons.remove)
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 14),
+                        child: Text('$_quantity',
+                            style: GoogleFonts.inter(fontSize: 21,
+                              fontWeight: FontWeight.w500,)),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            _incrementQuantity();
+                          },
+                          icon: const Icon(Icons.add)
+                      ),
+                      const SizedBox(width: 10)
+                    ],
+                  )
+                ],
+              ),
+            ),
           ),
-          productDetailsHeader(context, widget.product),
-          const SizedBox(height: 10),
-
+          Container(height: 20, color: const Color(0xFFF4F5F9)),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 22),
+            color: const Color(0xFF2A4399),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Add to cart',
+                    style: GoogleFonts.inter(fontSize: 17, color: Colors.white)),
+                const SizedBox(width: 10),
+                const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 30)
+              ],
+            ),
+          )
         ],
+      ),
+      body: SafeArea(
+          child: Column(
+            children: [
+              Container(
+                color: const Color(0xFFF2FFE6),
+                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 115),
+                child: Image.network('https://guspascad.blob.core.windows.net/democontainer/'
+                    '${widget.product.imageRes}'),
+              ),
+              productDetailsHeader(context, widget.product),
+              const SizedBox(height: 10),
+              productDetailsBody('widget.product.description')
+            ],
+          )
       ),
     );
   }
@@ -60,8 +118,9 @@ class _ProductDetailsState extends State<ProductDetails> {
 Widget productDetailsHeader(BuildContext context, Product product) {
   int price = product.price;
   return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 10),
+    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,7 +128,7 @@ Widget productDetailsHeader(BuildContext context, Product product) {
             Text('Rp $price',
                 style: GoogleFonts.inter(
                     fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: const Color(0xFF2A4399))),
             const Icon(Icons.favorite_border),
           ],
@@ -77,7 +136,7 @@ Widget productDetailsHeader(BuildContext context, Product product) {
         Text(product.name,
             style: GoogleFonts.inter(
                 fontSize: 22,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onBackground)),
         Row(
           children: [
@@ -87,7 +146,7 @@ Widget productDetailsHeader(BuildContext context, Product product) {
                     fontWeight: FontWeight.w500,
                     color: Theme.of(context).colorScheme.onBackground)),
             RatingBar.builder(
-              initialRating: 3,
+              initialRating: 4.5,
               minRating: 1,
               ignoreGestures: true,
               direction: Axis.horizontal,
@@ -101,19 +160,21 @@ Widget productDetailsHeader(BuildContext context, Product product) {
               onRatingUpdate: (rating) { },
             )
           ],
-        )
+        ),
       ],
     ),
   );
 }
 
-Widget productDetailsBody(String productDescription, int quantity, void Function() incrementQuantity) {
-  return Container(
-    padding: const EdgeInsets.all(10),
-    child: Column(
-      children: [
-        Text('sjksdj')
-      ],
-    ),
+Widget productDetailsBody(String productDescription) {
+  return Expanded(
+      child: Container(
+        width: double.infinity,
+        color: const Color(0xFFF4F5F9),
+        child: Text(productDescription,
+            style: GoogleFonts.inter(
+                fontSize: 15,
+                color: const Color(0xFF868889))),
+      )
   );
 }

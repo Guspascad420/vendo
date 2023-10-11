@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:vando/models/product.dart';
+import 'package:vando/screens/product_details.dart';
+
+import '../../models/database_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,81 +16,37 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<Product>> futureProductList;
+  DatabaseService service = DatabaseService();
+  final PageController controller = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+    futureProductList = service.retrieveProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final PageController controller = PageController();
-    return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: SvgPicture.asset('images/ic_drawer.svg'),
-            onPressed: () {},
-          ),
-          backgroundColor: Theme.of(context).colorScheme.background,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return SingleChildScrollView(
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.location_on, color: Color(0xFF314797)),
-              const SizedBox(width: 4),
-              Text('Universitas Brawijaya',
-                  style: GoogleFonts.inter(
-                      fontSize: 16, color: const Color(0xFF4B5563)))
-            ],
-          ),
-          actions: [Image.asset('images/shopping_cart.png')],
-        ),
-        bottomNavigationBar: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(30), topLeft: Radius.circular(30)
-              ),
-              boxShadow: [
-                BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
-              ),
-              child: BottomNavigationBar(
-                items: <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                      icon: SvgPicture.asset('images/ic_home.svg'),
-                      label: ''
-                  ),
-                  BottomNavigationBarItem(
-                      icon: SvgPicture.asset('images/ic_orders.svg'),
-                      label: ''
-                  ),
-                  BottomNavigationBarItem(
-                      icon: SvgPicture.asset('images/ic_profile.svg'),
-                      label: ''
-                  )
-                ],
-                selectedItemColor: const Color(0xFF314797),
-              ),
-            )
-        ),
-        body: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-                children: [
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color(0xFFE6E7E9)),
-                  margin: const EdgeInsets.symmetric(vertical: 30),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  width: 310,
+                    borderRadius: BorderRadius.circular(10),
+                    color: const Color(0xFFE6E7E9)),
+                margin: const EdgeInsets.symmetric(vertical: 30),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                width: 310,
                 child: Row(
                   children: [
                     const SizedBox(width: 25),
                     const Icon(Icons.search, color: Color(0xFF9CA3AF), size: 30),
                     const SizedBox(width: 5),
                     Text('Search',
-                      style: GoogleFonts.inter(
-                        fontSize: 14, color: const Color(0xFF9CA3AF)))
+                        style: GoogleFonts.inter(
+                            fontSize: 14, color: const Color(0xFF9CA3AF)))
                   ],
                 ),
               ),
@@ -102,33 +63,33 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 10),
               SmoothPageIndicator(
-                controller: controller,
-                count: 2,
-                effect: const SlideEffect()
+                  controller: controller,
+                  count: 2,
+                  effect: const SlideEffect()
               ),
               const SizedBox(height: 30),
               Center(
-                child: Text('Category',
-                  style: GoogleFonts.inter(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onBackground)
-                )
+                  child: Text('Category',
+                      style: GoogleFonts.inter(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onBackground)
+                  )
               ),
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   categoryItem('images/food_order.png',
-                    'Food & Beverages Vending Machine', const Color(0xFFE6F2EA),
-                    150, 0),
+                      'Food & Beverages Vending Machine', const Color(0xFFE6F2EA),
+                      150, 0),
                   categoryItem('images/beauty_products.png',
-                  'Fashion Vending Machine', const Color(0xFFFFE9E5), 120, 7)
+                      'Fashion Vending Machine', const Color(0xFFFFE9E5), 120, 7)
                 ],
               ),
               const SizedBox(height: 40),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.only(left: 20, right: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -138,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text('Today\'s new arrivals',
                               style: GoogleFonts.inter(
                                   fontSize: 18,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.bold,
                                   color: Theme.of(context).colorScheme.onBackground)),
                           Text('Best of the today\'s updated food list',
                               style: GoogleFonts.inter(
@@ -165,70 +126,96 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 220,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
+              FutureBuilder(
+                  future: futureProductList,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      var productList = snapshot.data!;
+                      return SizedBox(
+                        height: 220,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          separatorBuilder: (context, index) => const SizedBox(
+                              width: 10,
+                          ),
+                          itemBuilder: (context, index) {
+                            return productCard(context, productList[index]);
+                          }, itemCount: productList.length,
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('${snapshot.error}');
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+              ),
+              const SizedBox(height: 30),
+              Container(
+                padding: const EdgeInsets.only(left: 20, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    productCard(context, 'Chicken Katsu', '12.000', 'images/image_3.png'),
-                    productCard(context, 'Chicken Katsu', '12.000', 'images/image_3.png'),
-                    productCard(context, 'Chicken Katsu', '12.000', 'images/image_3.png')
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          child: Text('Find Vending Machines Nearby',
+                              style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.onBackground
+                              )
+                          ),
+                        ),
+                        SizedBox(
+                          width: 200,
+                          child: Text('Check your city\'s Nearby Vending Machine',
+                              style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF6B7280)
+                              )
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        TextButton(
+                            onPressed: () {},
+                            child: Text('See all',
+                                style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF6B7280)
+                                )
+                            )
+                        ),
+                        const Icon(Icons.arrow_forward_ios_sharp,
+                            color: Color(0xFF6B7280))
+                      ],
+                    )
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Text('Find Vending Machines Nearby',
-                          style: GoogleFonts.inter(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.onBackground
-                          )
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: Text('Check your city\'s Nearby Vending Machine',
-                            style: GoogleFonts.inter(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF6B7280)
-                            )
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          TextButton(
-                              onPressed: () {},
-                              child: Text('See all',
-                                  style: GoogleFonts.inter(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF6B7280)
-                                  )
-                              )
-                          ),
-                          const Icon(Icons.arrow_forward_ios_sharp,
-                              color: Color(0xFF6B7280))
-                        ],
-                      )
-                    ],
-                  )
-                ],
-              ),
               const SizedBox(height: 20),
               locationCard(context, 'UB Library',
-                  'Jl. Veteran, Ketawanggede, Kec. Lowokwaru', 'images/rectangle_387.png')
-        ])
-        )
+                  'Jl. Veteran, Ketawanggede, Kec. Lowokwaru', 'images/rectangle_387.png'),
+              const SizedBox(height: 40)
+            ]
+        ),
     );
   }
+
 }
 
 Widget locationCard(BuildContext context, String name, String address, String imageRes) {
-  return Card(
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 10),
+    child: Card(
+      surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         //set border radius more than 50% of height and width to make circle
@@ -248,12 +235,11 @@ Widget locationCard(BuildContext context, String name, String address, String im
           children: [
             const Icon(Icons.location_on, color: Color(0xFF2A4399)),
             SizedBox(
-              width: 50,
-              child: Text(
+                width: 120,
+                child: Text(
                     address,
                     style: GoogleFonts.inter(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
                         color: Theme.of(context).colorScheme.onBackground
                     )
                 )
@@ -265,54 +251,72 @@ Widget locationCard(BuildContext context, String name, String address, String im
 
             },
             style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
                 backgroundColor: const Color(0xFF314797),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0))
             ),
             child: Text('Lihat',
                 style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                   color: Colors.white,
                 ))
         ),
       ),
+    ),
   );
 }
 
-Widget productCard(BuildContext context, String itemName, String price, String imageRes) {
-  return Card(
-      surfaceTintColor: Theme.of(context).colorScheme.background,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        //set border radius more than 50% of height and width to make circle
-      ),
-    child: Container(
-        margin: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset(imageRes, scale: 3),
-            const SizedBox(height: 10),
-            Text(
-                itemName,
-                style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onBackground
-                )
-            ),
-            Text(
-                'Rp. $price',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF6B7280)
-                )
-            )
-          ],
+Widget productCard(BuildContext context, Product product) {
+  var productName = product.name.length > 17 ? '${product.name.substring(0, 13)}...' : product.name;
+
+  return GestureDetector(
+    onTap: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ProductDetails(product: product))
+      );
+    },
+    child: Card(
+        surfaceTintColor: Theme.of(context).colorScheme.background,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          //set border radius more than 50% of height and width to make circle
         ),
-    )
+        child: Container(
+          width: 145,
+          margin: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Center(
+                    child: Image.network('https://guspascad.blob.core.windows.net/democontainer/'
+                        '${product.imageRes}', scale: 2.2)
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                  productName,
+                  style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onBackground
+                  )
+              ),
+              Text(
+                  'Rp. ${product.price}',
+                  style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF6B7280)
+                  )
+              ),
+            ],
+          ),
+        )
+    ),
   );
 }
 
