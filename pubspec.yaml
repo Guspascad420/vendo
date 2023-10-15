@@ -86,6 +86,9 @@ flutter:
     - images/shopping_cart.png
     - images/about_me.svg
     - images/sign_out.svg
+    - images/empty_cart.png
+    - images/sad.png
+    - images/tracking_maps_2.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
