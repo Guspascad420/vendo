@@ -19,8 +19,39 @@ class DatabaseService {
     return data;
   }
 
-  Future<List<Product>> retrieveProducts() async {
+  Future<List<Product>> retrieveFourProducts() async {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await db.collection("products").limit(4).get();
+    return snapshot.docs
+        .map((docSnapshot) => Product.fromDocumentSnapshot(docSnapshot))
+        .toList();
+  }
+
+  Future<List<Product>> retrieveAllProducts() async {
     QuerySnapshot<Map<String, dynamic>> snapshot = await db.collection("products").get();
+    return snapshot.docs
+        .map((docSnapshot) => Product.fromDocumentSnapshot(docSnapshot))
+        .toList();
+  }
+  
+  Future<List<Product>> retrieveFoodProducts() async {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await db.collection("products")
+        .where("category", isEqualTo: "food").get();
+    return snapshot.docs
+        .map((docSnapshot) => Product.fromDocumentSnapshot(docSnapshot))
+        .toList();
+  }
+
+  Future<List<Product>> retrieveBeverageProducts() async {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await db.collection("products")
+        .where("category", isEqualTo: "beverage").get();
+    return snapshot.docs
+        .map((docSnapshot) => Product.fromDocumentSnapshot(docSnapshot))
+        .toList();
+  }
+
+  Future<List<Product>> retrieveFashionProducts() async {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await db.collection("products")
+        .where("category", isEqualTo: "fashion").get();
     return snapshot.docs
         .map((docSnapshot) => Product.fromDocumentSnapshot(docSnapshot))
         .toList();
