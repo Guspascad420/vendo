@@ -6,13 +6,15 @@ class Product {
   final String imageRes;
   final String description;
   final int price;
+  final String category;
 
   Product(
       {this.id,
       required this.name,
       required this.imageRes,
       required this.description,
-      required this.price});
+      required this.price,
+      required this.category});
 
   Map<String, dynamic> toMap() {
     return {
@@ -28,5 +30,6 @@ class Product {
         name = doc.data()!["name"],
         imageRes = doc.data()!["imageRes"],
         description = doc.data()!["description"],
-        price = doc.data()!["price"];
+        price = doc.data()!["price"],
+        category = doc.data()!["category"];
 }
