@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,7 +13,7 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
-  int _quantity = 0;
+  int _quantity = 1;
 
   void _incrementQuantity() {
     setState(() {
@@ -25,7 +23,7 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   void _decrementQuantity() {
     setState(() {
-      if (_quantity > 0) {
+      if (_quantity > 1) {
         _quantity--;
       }
     });
@@ -100,7 +98,6 @@ class _ProductDetailsState extends State<ProductDetails> {
           child: Column(
             children: [
               Container(
-                color: const Color(0xFFF2FFE6),
                 padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 115),
                 child: Image.network('https://guspascad.blob.core.windows.net/democontainer/'
                     '${widget.product.imageRes}'),
@@ -146,6 +143,7 @@ Widget productDetailsHeader(BuildContext context, Product product) {
                     fontWeight: FontWeight.w500,
                     color: Theme.of(context).colorScheme.onBackground)),
             RatingBar.builder(
+              itemSize: 25,
               initialRating: 4.5,
               minRating: 1,
               ignoreGestures: true,
