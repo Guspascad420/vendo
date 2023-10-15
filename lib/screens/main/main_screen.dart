@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vando/screens/main/home_screen.dart';
 import 'package:vando/screens/main/order_history.dart';
 import 'package:vando/screens/main/profile_screen.dart';
+import 'package:vando/screens/shopping_cart.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -26,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
     const List<Widget> bodyWidgetOptions = <Widget> [
       HomeScreen(),
       OrderHistory(),
-      ProfileScreen()
+      ProfileScreen(),
     ];
 
     List<PreferredSizeWidget> appBarWidgetOptions = <PreferredSizeWidget>[
@@ -64,13 +65,13 @@ class _MainScreenState extends State<MainScreen> {
                   BottomNavigationBarItem(
                       icon: SvgPicture.asset('images/ic_orders.svg'),
                       activeIcon: SvgPicture.asset('images/ic_orders.svg',
-                          color: const Color(0xFF4B5563)),
+                          color: const Color(0xFF314797)),
                       label: ''
                   ),
                   BottomNavigationBarItem(
                       icon: SvgPicture.asset('images/ic_profile.svg'),
                       activeIcon: SvgPicture.asset('images/ic_profile.svg',
-                          color: const Color(0xFF4B5563)),
+                          color: const Color(0xFF314797)),
                       label: ''
                   )
                 ],
@@ -99,7 +100,23 @@ PreferredSizeWidget homeAppBar(BuildContext context) {
                 fontSize: 16, color: const Color(0xFF4B5563)))
       ],
     ),
-    actions: [Image.asset('images/shopping_cart.png', scale: 2)
+    actions: [
+      GestureDetector(
+          onTap: () { },
+          child: const Icon(Icons.favorite_border, color: Color(0xFF314797))
+      ),
+      const SizedBox(width: 10),
+      GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ShoppingCart()
+              )
+          );
+        },
+        child: Image.asset('images/shopping_cart.png', scale: 2)
+      ),
+      const SizedBox(width: 10)
     ],
   );
 }
@@ -109,7 +126,8 @@ PreferredSizeWidget orderHistoryAppBar(BuildContext context) {
     surfaceTintColor: Colors.white,
     title: Text('Riwayat Pemesanan',
         style: GoogleFonts.inter(
-            fontSize: 20, color: Theme.of(context).colorScheme.onBackground)),
+            fontSize: 20, fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onBackground)),
     centerTitle: true
   );
 }
@@ -119,7 +137,8 @@ PreferredSizeWidget profileAppBar(BuildContext context) {
       surfaceTintColor: Colors.white,
       title: Text('Profil',
           style: GoogleFonts.inter(
-              fontSize: 20, color: Theme.of(context).colorScheme.onBackground)),
+              fontSize: 20, fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onBackground)),
       centerTitle: true
   );
 }
