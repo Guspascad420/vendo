@@ -80,27 +80,6 @@ class WelcomePage extends StatelessWidget {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF2A4399)))),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 95, vertical: 40),
-              child: RichText(
-                text: TextSpan(
-                    style: GoogleFonts.inter(
-                        fontSize: 14, color: const Color(0xFF4B5563)),
-                    children: [
-                      const TextSpan(
-                          text:
-                              'Apakah kamu memiliki produk? ayo daftarkan produkmu '),
-                      TextSpan(
-                          text: 'disini!',
-                          style: GoogleFonts.inter(
-                              fontSize: 14,
-                              color: const Color(0xFF2A4399),
-                              decoration: TextDecoration.underline),
-                          recognizer: TapGestureRecognizer()..onTap = () {})
-                    ]),
-                textAlign: TextAlign.center,
-              ),
-            )
           ],
         ),
       ),
@@ -128,8 +107,7 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
 
   void setActiveContent() {
     setState(() {
-      _activeContent =
-          _activeContent == 'Create Account' ? 'Login' : 'Create Account';
+      _activeContent = _activeContent == 'Buat Akun' ? 'Login' : 'Buat Akun';
     });
   }
 
@@ -158,15 +136,17 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                 ),
               ),
               const SizedBox(height: 40),
-              Row(children: [
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                 bottomSheetHeader(
-                    'Create Account', _activeContent, setActiveContent),
-                const SizedBox(width: 80),
+                    'Buat Akun', _activeContent, setActiveContent),
+                // const SizedBox(width: 80),
                 bottomSheetHeader('Login', _activeContent, setActiveContent),
               ]),
               const SizedBox(height: 30),
               Expanded(
-                  child: _activeContent == 'Create Account'
+                  child: _activeContent == 'Buat Akun'
                       ? const CreateAccount()
                       : const Login())
             ],
@@ -175,8 +155,7 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
   }
 }
 
-Widget bottomSheetHeader(
-    String content, String activeContent, void Function() setActiveContent) {
+Widget bottomSheetHeader(String content, String activeContent, void Function() setActiveContent) {
   return activeContent == content
       ? Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -222,6 +201,7 @@ class _CreateAccountState extends State<CreateAccount> {
   final TextEditingController _fullNameTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
+  final validEmail = RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
 
   @override
   Widget build(BuildContext context) {
@@ -232,8 +212,7 @@ class _CreateAccountState extends State<CreateAccount> {
           style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 10),
-        reusableTextField(
-            "Masukkan nama lengkapmu", false, _fullNameTextController),
+        reusableTextField("Masukkan nama lengkapmu", false, _fullNameTextController),
         const SizedBox(height: 20),
         Text(
           'Alamat Email',
@@ -252,7 +231,8 @@ class _CreateAccountState extends State<CreateAccount> {
             "Contoh : namaemail@emailkamu.com", true, _passwordTextController),
         const SizedBox(height: 30),
         ElevatedButton(
-            onPressed: // _passwordTextController.text.isEmpty || _emailTextController.text.isEmpty
+            onPressed:
+            // _passwordTextController.text.isEmpty || _emailTextController.text.isEmpty
                 //     ? null:
                 () {
               Navigator.of(context).push(
@@ -282,7 +262,7 @@ class _CreateAccountState extends State<CreateAccount> {
               children: [
                 Image.asset('images/ic_google.png', scale: 2.5),
                 const SizedBox(width: 20),
-                Text('Sign up with Google',
+                Text('Sign up dengan Google',
                     style: GoogleFonts.inter(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -363,7 +343,8 @@ class _LoginState extends State<Login> {
                     color: Theme.of(context).colorScheme.background))),
         Padding(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom))
+                bottom: MediaQuery.of(context).viewInsets.bottom)
+        )
       ],
     );
   }
