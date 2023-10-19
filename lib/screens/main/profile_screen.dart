@@ -1,25 +1,60 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vando/screens/about_me.dart';
-import 'package:vando/screens/umkm_onboarding.dart';
+import 'package:vando/screens/auth/welcome_page.dart';
+import 'package:vando/screens/umkm/umkm_onboarding.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+import '../../models/users.dart';
+
+
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key, required this.futureUserData});
+  final Future<Users> futureUserData;
+
+  @override
+  State<StatefulWidget> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+
+  late Users _userData;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.futureUserData.then((user) => setState(() {
+      _userData = user;
+    }));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 30),
-        userBiodata(context),
-      ],
+    return FutureBuilder(
+      future: widget.futureUserData,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 30),
+              userBiodata(context, _userData),
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const Center(
+          child: CircularProgressIndicator()
+        );
+      }
     );
   }
 }
 
-Widget userBiodata(BuildContext context) {
+Widget userBiodata(BuildContext context, Users user) {
+  FirebaseAuth auth = FirebaseAuth.instance;
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -31,12 +66,12 @@ Widget userBiodata(BuildContext context) {
             const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
       ),
       const SizedBox(height: 10),
-      Text('Kylian Mbappe',
+      Text(user.fullName,
           style: GoogleFonts.inter(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onBackground)),
-      Text('kylianmbappe@gmail.com',
+      Text(user.email,
           style: GoogleFonts.inter(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -47,7 +82,7 @@ Widget userBiodata(BuildContext context) {
           'Tentang Saya',
           () {
             Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const AboutMe())
+                MaterialPageRoute(builder: (context) => AboutMe(user: user))
             );
           }
       ),
@@ -55,22 +90,20 @@ Widget userBiodata(BuildContext context) {
       profileMenuContent(
           context,
           const Icon(Icons.location_on, color: Color(0xFF2A4399)),
-          'Lokasi',
-          () {}),
+          'Lokasi'
+      ),
       const SizedBox(height: 25),
       profileMenuContent(
           context,
           const Icon(Icons.payment, color: Color(0xFF2A4399)),
-          'Pembayaran',
-          () {}
+          'Pembayaran'
       ),
       const SizedBox(height: 25),
       profileMenuContent(
           context,
           const Icon(Icons.notifications_none_outlined,
               color: Color(0xFF2A4399)),
-          'Notifikasi',
-          () {}
+          'Notifikasi'
       ),
       const SizedBox(height: 25),
       Container(
@@ -88,13 +121,20 @@ Widget userBiodata(BuildContext context) {
       ),
       const SizedBox(height: 25),
       profileMenuContent(
-          context, SvgPicture.asset('images/sign_out.svg'), 'Sign out', () {}),
+          context, SvgPicture.asset('images/sign_out.svg'), 'Sign out',
+              () {
+                auth.signOut();
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => const WelcomePage()),
+                        (route) => false);
+              }),
     ],
   );
 }
 
 Widget profileMenuContent(BuildContext context, Widget icon, String title,
-    void Function() onMenuTapped) {
+    [void Function()? onMenuTapped]) {
   return
     GestureDetector(
       onTap: onMenuTapped,
