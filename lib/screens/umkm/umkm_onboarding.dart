@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'onboarding_page.dart';
+import 'package:vando/screens/umkm/merchant_info.dart';
+import '../onboarding_page.dart';
 
 class UMKMOnboarding extends StatefulWidget {
   const UMKMOnboarding({super.key});
@@ -54,7 +55,7 @@ class _UMKMOnboardingState extends State<UMKMOnboarding> {
       body: PageView(
         controller: controller,
         children: [
-          OnboardingContent(
+          const OnboardingContent(
             title: 'UMKM Support!',
             description: 'Hallo para pengusaha lokal!!!  UMKM adalah salah satu '
                 'penyokong terbesar GDP suatu negara. Dengan itu kami '
@@ -62,8 +63,7 @@ class _UMKMOnboardingState extends State<UMKMOnboarding> {
                 'kami sesuai arahan Kementerian Perdagangan Indonesia.',
             svgAsset: 'images/tracking_maps_2.svg',
             svgMarginTop: 80,
-            svgMarginBottom: 105,
-            onButtonPressed: () { }
+            svgMarginBottom: 105
           ),
           OnboardingContent(
             title: 'Pasarkan Produkmu Sekarang',
@@ -73,7 +73,13 @@ class _UMKMOnboardingState extends State<UMKMOnboarding> {
             svgMarginTop: 80,
             svgMarginBottom: 105,
             showButton: true,
-            onButtonPressed: () { }
+            onButtonPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MerchantInfo()
+                  )
+              );
+            }
           )
         ],
       ),
