@@ -1,19 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vando/models/database_service.dart';
 import '../models/product.dart';
 
 class ProductDetails extends StatefulWidget {
-  const ProductDetails({super.key, required this.product});
+  const ProductDetails(
+      {super.key, required this.product, required this.productsOnCart,
+        required this.onIconPressed, required this.onAddToCart,
+        required this.isFavorite, this.setIsProductOnCart});
 
   final Product product;
+  final bool isFavorite;
+  final List<Product> productsOnCart;
+  final void Function(Product) onIconPressed;
+  final void Function(Product, int) onAddToCart;
+  final void Function()? setIsProductOnCart;
 
   @override
   State<StatefulWidget> createState() => _ProductDetailsState();
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
+  DatabaseService service = DatabaseService();
+  FirebaseAuth auth = FirebaseAuth.instance;
+
   int _quantity = 1;
+  late bool _isFavorite;
 
   void _incrementQuantity() {
     setState(() {
@@ -29,6 +43,18 @@ class _ProductDetailsState extends State<ProductDetails> {
     });
   }
 
+  void _setFavorite() {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isFavorite = widget.isFavorite;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,13 +68,14 @@ class _ProductDetailsState extends State<ProductDetails> {
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.only(left: 25, top: 5, bottom: 5),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Theme.of(context).colorScheme.background),
+                  borderRadius: BorderRadius.circular(10),
+                  color: Theme.of(context).colorScheme.background),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Quantity',
-                      style: GoogleFonts.inter(fontSize: 14,
+                      style: GoogleFonts.inter(
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: const Color(0xFF868889))),
                   Row(
@@ -57,20 +84,20 @@ class _ProductDetailsState extends State<ProductDetails> {
                           onPressed: () {
                             _decrementQuantity();
                           },
-                          icon: const Icon(Icons.remove)
-                      ),
+                          icon: const Icon(Icons.remove)),
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 14),
                         child: Text('$_quantity',
-                            style: GoogleFonts.inter(fontSize: 21,
-                              fontWeight: FontWeight.w500,)),
+                            style: GoogleFonts.inter(
+                              fontSize: 21,
+                              fontWeight: FontWeight.w500,
+                            )),
                       ),
                       IconButton(
                           onPressed: () {
                             _incrementQuantity();
                           },
-                          icon: const Icon(Icons.add)
-                      ),
+                          icon: const Icon(Icons.add)),
                       const SizedBox(width: 10)
                     ],
                   )
@@ -79,19 +106,29 @@ class _ProductDetailsState extends State<ProductDetails> {
             ),
           ),
           Container(height: 20, color: const Color(0xFFF4F5F9)),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 22),
-            color: const Color(0xFF2A4399),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Add to cart',
-                    style: GoogleFonts.inter(fontSize: 17, color: Colors.white)),
-                const SizedBox(width: 10),
-                const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 30)
-              ],
-            ),
-          )
+          GestureDetector(
+              onTap: () {
+                widget.onAddToCart(widget.product, _quantity);
+                if (widget.setIsProductOnCart != null) {
+                  widget.setIsProductOnCart!();
+                }
+                Navigator.pop(context);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 22),
+                color: const Color(0xFF2A4399),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Add to cart',
+                        style: GoogleFonts.inter(
+                            fontSize: 17, color: Colors.white)),
+                    const SizedBox(width: 10),
+                    const Icon(Icons.shopping_bag_outlined,
+                        color: Colors.white, size: 30)
+                  ],
+                ),
+              ))
         ],
       ),
       body: SafeArea(
@@ -99,10 +136,17 @@ class _ProductDetailsState extends State<ProductDetails> {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 115),
-                child: Image.network('https://guspascad.blob.core.windows.net/democontainer/'
-                    '${widget.product.imageRes}'),
+                child: Image.network(
+                    'https://guspascad.blob.core.windows.net/democontainer/'
+                        '${widget.product.imageRes}'),
               ),
-              productDetailsHeader(context, widget.product),
+              productDetailsHeader(
+                  context,
+                  widget.product,
+                  _isFavorite,
+                  widget.onIconPressed,
+                  _setFavorite
+              ),
               const SizedBox(height: 10),
               productDetailsBody('widget.product.description')
             ],
@@ -112,7 +156,9 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 }
 
-Widget productDetailsHeader(BuildContext context, Product product) {
+Widget productDetailsHeader(
+    BuildContext context, Product product, bool isFavorite,
+    void Function(Product) onIconPressed, void Function() setFavorite) {
   int price = product.price;
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -127,7 +173,15 @@ Widget productDetailsHeader(BuildContext context, Product product) {
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF2A4399))),
-            const Icon(Icons.favorite_border),
+            IconButton(
+                onPressed: () {
+                  onIconPressed(product);
+                  setFavorite();
+                },
+                icon: isFavorite
+                    ? const Icon(Icons.favorite, color: Colors.red)
+                    : const Icon(Icons.favorite_border)
+            )
           ],
         ),
         Text(product.name,
@@ -155,7 +209,7 @@ Widget productDetailsHeader(BuildContext context, Product product) {
                 Icons.star,
                 color: Colors.amber,
               ),
-              onRatingUpdate: (rating) { },
+              onRatingUpdate: (rating) {},
             )
           ],
         ),
@@ -170,9 +224,6 @@ Widget productDetailsBody(String productDescription) {
         width: double.infinity,
         color: const Color(0xFFF4F5F9),
         child: Text(productDescription,
-            style: GoogleFonts.inter(
-                fontSize: 15,
-                color: const Color(0xFF868889))),
-      )
-  );
+        style: GoogleFonts.inter(fontSize: 15, color: const Color(0xFF868889))),
+  ));
 }
