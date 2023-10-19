@@ -1,9 +1,12 @@
-import 'package:flutter/gestures.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vando/models/users.dart';
 import 'package:vando/screens/auth/forget_password.dart';
 import 'package:vando/screens/main/main_screen.dart';
 import 'package:vando/utils/reusable_widgets.dart';
+
+import '../../models/database_service.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -44,7 +47,7 @@ class WelcomePage extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return const AuthBottomSheet(
-                            activeContent: 'Create Account');
+                            activeContent: 'Buat Akun');
                       });
                 },
                 style: ElevatedButton.styleFrom(
@@ -53,7 +56,7 @@ class WelcomePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10.0)),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 60, vertical: 15)),
-                child: Text('Create Account',
+                child: Text('Buat Akun',
                     style: GoogleFonts.inter(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -74,7 +77,7 @@ class WelcomePage extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0)),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 105, vertical: 12)),
+                        horizontal: 85, vertical: 12)),
                 child: Text('Login',
                     style: GoogleFonts.inter(
                         fontSize: 18,
@@ -136,9 +139,7 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                 ),
               ),
               const SizedBox(height: 40),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 bottomSheetHeader(
                     'Buat Akun', _activeContent, setActiveContent),
                 // const SizedBox(width: 80),
@@ -155,7 +156,8 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
   }
 }
 
-Widget bottomSheetHeader(String content, String activeContent, void Function() setActiveContent) {
+Widget bottomSheetHeader(
+    String content, String activeContent, void Function() setActiveContent) {
   return activeContent == content
       ? Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -201,7 +203,15 @@ class _CreateAccountState extends State<CreateAccount> {
   final TextEditingController _fullNameTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
-  final validEmail = RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
+  final validEmail = RegExp(
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
+  final validPassword = RegExp(r"^(?=.*[0-9]).{8,}$");
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+  DatabaseService service = DatabaseService();
+  bool _isEmailValid = true;
+  bool _isPasswordValid = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +222,8 @@ class _CreateAccountState extends State<CreateAccount> {
           style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 10),
-        reusableTextField("Masukkan nama lengkapmu", false, _fullNameTextController),
+        reusableTextField(
+            "Masukkan nama lengkapmu", false, _fullNameTextController),
         const SizedBox(height: 20),
         Text(
           'Alamat Email',
@@ -221,7 +232,16 @@ class _CreateAccountState extends State<CreateAccount> {
         const SizedBox(height: 10),
         reusableTextField(
             "Contoh : namaemail@emailkamu.com", false, _emailTextController),
-        const SizedBox(height: 20),
+        _isEmailValid
+            ? const SizedBox()
+            : Container(
+                margin: const EdgeInsets.only(top: 7),
+                child: Text(
+                  'Format email salah!',
+                  textAlign: TextAlign.right,
+                  style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
+                )),
+        const SizedBox(height: 10),
         Text(
           'Password',
           style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
@@ -229,26 +249,74 @@ class _CreateAccountState extends State<CreateAccount> {
         const SizedBox(height: 10),
         reusableTextField(
             "Contoh : namaemail@emailkamu.com", true, _passwordTextController),
+        _isPasswordValid
+            ? const SizedBox()
+            : Container(
+                margin: const EdgeInsets.only(top: 7),
+                child: Text(
+                  'Password minimal 8 Karakter & mengandung angka',
+                  textAlign: TextAlign.right,
+                  style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
+                )),
         const SizedBox(height: 30),
         ElevatedButton(
-            onPressed:
-            // _passwordTextController.text.isEmpty || _emailTextController.text.isEmpty
-                //     ? null:
-                () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const MainScreen()));
-            },
+            onPressed: _passwordTextController.text.isEmpty ||
+                    _emailTextController.text.isEmpty
+                ? null
+                : () {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    validEmail.hasMatch(_emailTextController.text)
+                        ? setState(() {
+                            _isEmailValid = true;
+                          })
+                        : setState(() {
+                            _isEmailValid = false;
+                          });
+                    validPassword.hasMatch(_passwordTextController.text)
+                        ? setState(() {
+                            _isPasswordValid = true;
+                          })
+                        : setState(() {
+                            _isPasswordValid = false;
+                          });
+                    if (_isPasswordValid && _isEmailValid) {
+                      auth
+                          .createUserWithEmailAndPassword(
+                              email: _emailTextController.text,
+                              password: _passwordTextController.text)
+                          .then((value) {
+                        var user = Users(
+                            fullName: _fullNameTextController.text,
+                            email: _emailTextController.text,
+                            productsOnCart: [],
+                            favProducts: []);
+                        service.createNewUser(user);
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MainScreen()),
+                            (route) => false);
+                      });
+                    }
+                  },
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF314797),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 105, vertical: 12)),
-            child: Text('Sign Up',
-                style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.background))),
+            child: _isLoading
+                ? const CircularProgressIndicator()
+                : Text('Sign Up',
+                    style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.background))),
         const SizedBox(height: 10),
         ElevatedButton(
             onPressed: () {},
@@ -269,6 +337,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         color: const Color(0xFF2A4399))),
               ],
             )),
+        const SizedBox(height: 40),
         Padding(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom))
@@ -288,6 +357,23 @@ class _LoginState extends State<Login> {
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
 
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  bool _isError = false;
+  bool _isLoading = false;
+
+  checkAuthentication() async {
+    auth.authStateChanges().listen((user) {
+      if (user != null) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const MainScreen()),
+                (route) => false);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -305,6 +391,13 @@ class _LoginState extends State<Login> {
         ),
         const SizedBox(height: 10),
         reusableTextField("Masukkan password", true, _passwordTextController),
+        _isError
+            ? Text(
+                'Email / Password kamu salah!',
+                textAlign: TextAlign.right,
+                style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
+              )
+            : const SizedBox(),
         const SizedBox(height: 5),
         Container(
           alignment: Alignment.centerRight,
@@ -323,28 +416,41 @@ class _LoginState extends State<Login> {
         ),
         const SizedBox(height: 30),
         ElevatedButton(
-            onPressed:
-                // _passwordTextController.text.isEmpty || _emailTextController.text.isEmpty
-                //     ? null:
-                () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const MainScreen()));
-            },
+            onPressed: _passwordTextController.text.isEmpty ||
+                    _emailTextController.text.isEmpty
+                ? null
+                : () async {
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+                    try {
+                      await auth.signInWithEmailAndPassword(email: _emailTextController.text,
+                          password: _passwordTextController.text);
+                      checkAuthentication();
+                    } on FirebaseAuthException catch (e) {
+                      setState(() {
+                        _isLoading = false;
+                        _isError = true;
+                      });
+                    }
+                  },
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF314797),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 105, vertical: 12)),
-            child: Text('Login',
-                style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.background))),
+            child: _isLoading
+                ? const CircularProgressIndicator()
+                : Text('Login',
+                    style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.background))),
         Padding(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom)
-        )
+                bottom: MediaQuery.of(context).viewInsets.bottom))
       ],
     );
   }
