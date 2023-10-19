@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -7,9 +8,21 @@ import 'package:vando/screens/product_details.dart';
 import 'package:vando/screens/search_screen.dart';
 
 import '../../models/database_service.dart';
+import '../../models/users.dart';
+import '../../utils/reusable_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.favProducts,
+    required this.productsOnCart, required this.setFavProduct,
+    required this.isFavorite, required this.addProductToCart,
+    required this.removeProductFromCart});
+
+  final List<Product> favProducts;
+  final List<Product> productsOnCart;
+  final void Function(Product, int) addProductToCart;
+  final void Function(Product, int) removeProductFromCart;
+  final void Function(Product) setFavProduct;
+  final bool Function(Product) isFavorite;
 
   @override
   State<StatefulWidget> createState() => _HomeScreenState();
@@ -52,8 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 14, color: const Color(0xFF9CA3AF)))
                 ],
               ),
-            )
-        ),
+            )),
         const SizedBox(height: 10),
         SizedBox(
           height: 242,
@@ -89,7 +101,16 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 40),
         productCardHeader(context, 'Lihat Produk Kami', () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const CompleteProductList()));
+              builder: (context) => CompleteProductList(
+                    favProducts: widget.favProducts,
+                    isProductsOnCart: widget.productsOnCart.isNotEmpty,
+                    productsOnCartCount: widget.productsOnCart.length,
+                    productsOnCart: widget.productsOnCart,
+                    addProductToCart: widget.addProductToCart,
+                    onIconTapped: widget.setFavProduct,
+                    isFavorite: widget.isFavorite,
+                    removeProductFromCart: widget.removeProductFromCart
+                  )));
         }),
         FutureBuilder(
             future: futureProductList,
@@ -104,7 +125,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 10,
                     ),
                     itemBuilder: (context, index) {
-                      return productCard(context, productList[index]);
+                      return productCard(
+                          context, productList[index], widget.productsOnCart,
+                          widget.isFavorite(productList[index]),
+                          widget.setFavProduct, widget.addProductToCart
+                      );
                     },
                     itemCount: productList.length,
                   ),
@@ -170,42 +195,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Widget productCardHeader(
-    BuildContext context, String title, void Function() onTextPressed) {
-  return Container(
-    padding: const EdgeInsets.only(left: 20, right: 10),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title,
-              style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onBackground)),
-          Text('Best of the today\'s updated food list',
-              style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF6B7280)))
-        ]),
-        Row(
-          children: [
-            TextButton(
-                onPressed: onTextPressed,
-                child: Text('See all',
-                    style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF6B7280)))),
-            const Icon(Icons.arrow_forward_ios_sharp, color: Color(0xFF6B7280))
-          ],
-        )
-      ],
-    ),
-  );
-}
-
 Widget locationCard(
     BuildContext context, String name, String address, String imageRes) {
   return Container(
@@ -250,53 +239,6 @@ Widget locationCard(
                 ))),
       ),
     ),
-  );
-}
-
-Widget productCard(BuildContext context, Product product) {
-  var productName = product.name.length > 15
-      ? '${product.name.substring(0, 13)}...'
-      : product.name;
-
-  return GestureDetector(
-    onTap: () {
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ProductDetails(product: product)));
-    },
-    child: Card(
-        surfaceTintColor: Theme.of(context).colorScheme.background,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          //set border radius more than 50% of height and width to make circle
-        ),
-        child: Container(
-          width: 145,
-          margin: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: Center(
-                    child: Image.network(
-                        'https://guspascad.blob.core.windows.net/democontainer/'
-                        '${product.imageRes}',
-                        scale: 2.2)),
-              ),
-              const SizedBox(height: 10),
-              Text(productName,
-                  style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onBackground)),
-              Text('Rp. ${product.price}',
-                  style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF6B7280))),
-            ],
-          ),
-        )),
   );
 }
 
