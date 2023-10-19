@@ -43,6 +43,8 @@ dependencies:
   azblob: ^2.6.0
   xml2json: ^6.2.0
   http: ^1.1.0
+  firebase_auth: ^4.10.1
+  timelines: ^0.1.0
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +91,10 @@ flutter:
     - images/empty_cart.png
     - images/sad.png
     - images/tracking_maps_2.svg
+    - images/trash.svg
+    - images/food_or_drinks.png
+    - images/fashion.png
+    - images/success_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
