@@ -89,7 +89,7 @@ class OnboardingContent extends StatelessWidget {
       required this.svgMarginTop,
       required this.svgMarginBottom,
       this.showButton = false,
-      required this.onButtonPressed});
+      this.onButtonPressed});
 
   final String svgAsset;
   final String title;
@@ -97,7 +97,7 @@ class OnboardingContent extends StatelessWidget {
   final double svgMarginTop;
   final double svgMarginBottom;
   final bool showButton;
-  final void Function() onButtonPressed;
+  final void Function()? onButtonPressed;
 
   @override
   Widget build(BuildContext context) {
