@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:vando/screens/main/main_screen.dart';
-import 'package:vando/screens/onboarding_page.dart';
+import 'package:vendo/screens/main/main_screen.dart';
+import 'package:vendo/screens/onboarding_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 

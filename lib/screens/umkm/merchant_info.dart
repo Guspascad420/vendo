@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timelines/timelines.dart';
-import 'package:vando/screens/umkm/product_regist_category.dart';
+import 'package:vendo/screens/umkm/product_regist_category.dart';
 
 import '../../utils/reusable_widgets.dart';
 

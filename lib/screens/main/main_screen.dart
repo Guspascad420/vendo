@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vando/models/users.dart';
-import 'package:vando/screens/favorite_screen.dart';
-import 'package:vando/screens/main/home_screen.dart';
-import 'package:vando/screens/main/order_history.dart';
-import 'package:vando/screens/main/profile_screen.dart';
-import 'package:vando/screens/shopping_cart.dart';
+import 'package:vendo/models/users.dart';
+import 'package:vendo/screens/favorite_screen.dart';
+import 'package:vendo/screens/main/home_screen.dart';
+import 'package:vendo/screens/main/order_history.dart';
+import 'package:vendo/screens/main/profile_screen.dart';
+import 'package:vendo/screens/shopping_cart.dart';
 
 import '../../models/database_service.dart';
 import '../../models/product.dart';
@@ -112,7 +112,8 @@ class _MainScreenState extends State<MainScreen> {
     ];
 
     List<PreferredSizeWidget> appBarWidgetOptions = <PreferredSizeWidget>[
-      homeAppBar(context, _favProducts, _productsOnCart, removeFavProduct, removeProductFromCart),
+      homeAppBar(context, _favProducts, _productsOnCart, removeFavProduct, removeProductFromCart,
+      addProductToCart),
       orderHistoryAppBar(context),
       profileAppBar(context)
     ];
@@ -164,7 +165,8 @@ class _MainScreenState extends State<MainScreen> {
 PreferredSizeWidget homeAppBar(BuildContext context, List<Product> favProducts,
     List<Product> productsOnCart,
     void Function(Product) removeFavProduct,
-    void Function(Product, int) removeProductFromCart) {
+    void Function(Product, int) removeProductFromCart,
+    void Function(Product, int) addProductToCart) {
   return AppBar(
     surfaceTintColor: Colors.white,
     leading: const SizedBox(),
@@ -185,7 +187,9 @@ PreferredSizeWidget homeAppBar(BuildContext context, List<Product> favProducts,
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) =>
                     FavoriteScreen(favProducts: favProducts,
-                      removeFavProduct: removeFavProduct))
+                      removeFavProduct: removeFavProduct,
+                      onAddToCart: addProductToCart, productsOnCart: productsOnCart,
+                        removeProductFromCart: removeProductFromCart))
             );
           },
           child: const Icon(Icons.favorite_border, color: Color(0xFF314797))),
