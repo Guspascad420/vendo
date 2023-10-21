@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vando/models/users.dart';
+import 'package:vendo/models/users.dart';
 
 import '../utils/reusable_widgets.dart';
 
@@ -69,16 +70,19 @@ class _AboutMeState extends State<AboutMe> {
                           fontWeight: FontWeight.w600,
                           color: Theme.of(context).colorScheme.onBackground)),
                   const SizedBox(height: 10),
-                  reusableTextField(widget.user.fullName, false, _fullNameTextController,
+                  reusableTextFieldWithIcon(widget.user.fullName, false, _fullNameTextController,
+                      const Icon(Icons.person_2_outlined),
                       const Color(0xFF314797), 2),
                   const SizedBox(height: 10),
-                  reusableTextField(
+                  reusableTextFieldWithIcon(
                       widget.user.email, false, _emailTextController,
+                      const Icon(Icons.email_outlined),
                       const Color(0xFF314797), 2
                   ),
                   const SizedBox(height: 10),
-                  reusableTextField(
-                      "+62 87845245874", false, _phoneTextController,
+                  reusablePhoneTextField(
+                      "+62 87845245874", _phoneTextController,
+                      const Icon(Icons.phone_android),
                       const Color(0xFF314797), 2
                   ),
                   const SizedBox(height: 25),
@@ -88,16 +92,19 @@ class _AboutMeState extends State<AboutMe> {
                           fontWeight: FontWeight.w600,
                           color: Theme.of(context).colorScheme.onBackground)),
                   const SizedBox(height: 10),
-                  reusableTextField("Password saat ini", false, _currentPassTextController,
+                  reusableTextFieldWithIcon("Password saat ini", true, _currentPassTextController,
+                      const Icon(Icons.lock_outline),
                       const Color(0xFF314797), 2),
                   const SizedBox(height: 10),
-                  reusableTextField(
-                      "", false, _newPassTextController,
+                  reusableTextFieldWithIcon(
+                      "Password Baru", true, _newPassTextController,
+                      const Icon(Icons.lock_outline),
                       const Color(0xFF314797), 2
                   ),
                   const SizedBox(height: 10),
-                  reusableTextField("Konfirmasi password", false,
-                      _confirmPassTextController, const Color(0xFF314797), 2),
+                  reusableTextFieldWithIcon("Konfirmasi password", true,
+                      _confirmPassTextController,
+                      const Icon(Icons.lock_outline), const Color(0xFF314797), 2),
                   const SizedBox(height: 10),
                 ],
               ),
