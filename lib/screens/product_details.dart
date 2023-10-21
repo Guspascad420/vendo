@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vando/models/database_service.dart';
+import 'package:vendo/models/database_service.dart';
+import 'package:vendo/utils/currency_format.dart';
 import '../models/product.dart';
 
 class ProductDetails extends StatefulWidget {
@@ -22,9 +23,12 @@ class ProductDetails extends StatefulWidget {
   State<StatefulWidget> createState() => _ProductDetailsState();
 }
 
-class _ProductDetailsState extends State<ProductDetails> {
+class _ProductDetailsState extends State<ProductDetails>
+    with SingleTickerProviderStateMixin {
   DatabaseService service = DatabaseService();
   FirebaseAuth auth = FirebaseAuth.instance;
+  late final AnimationController _controller = AnimationController(
+      duration: const Duration(milliseconds: 200), vsync: this, value: 1.0);
 
   int _quantity = 1;
   late bool _isFavorite;
@@ -47,6 +51,21 @@ class _ProductDetailsState extends State<ProductDetails> {
     setState(() {
       _isFavorite = !_isFavorite;
     });
+  }
+
+  void showSnackBar(BuildContext context) {
+    String text = _isFavorite ? 'Berhasil menambahkan produk ke favorit'
+        : 'Berhasil menghapus produk dari favorit';
+    final snackBar = SnackBar(
+      content: Text(text,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          )),
+      backgroundColor: const Color(0xFF2A4399),
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -144,11 +163,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                   context,
                   widget.product,
                   _isFavorite,
+                  _controller,
                   widget.onIconPressed,
-                  _setFavorite
+                  _setFavorite,
+                  showSnackBar
               ),
               const SizedBox(height: 10),
-              productDetailsBody('widget.product.description')
+              productDetailsBody('Description goes here')
             ],
           )
       ),
@@ -158,7 +179,10 @@ class _ProductDetailsState extends State<ProductDetails> {
 
 Widget productDetailsHeader(
     BuildContext context, Product product, bool isFavorite,
-    void Function(Product) onIconPressed, void Function() setFavorite) {
+    AnimationController controller,
+    void Function(Product) onIconPressed, void Function() setFavorite,
+    void Function(BuildContext) showSnackbar
+    ) {
   int price = product.price;
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -168,19 +192,28 @@ Widget productDetailsHeader(
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Rp $price',
+            Text(CurrencyFormat.convertToIdr(price),
                 style: GoogleFonts.inter(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF2A4399))),
-            IconButton(
-                onPressed: () {
+            GestureDetector(
+                onTap: () {
                   onIconPressed(product);
                   setFavorite();
+                  controller
+                      .reverse()
+                      .then((value) => controller.forward());
+                  showSnackbar(context);
                 },
-                icon: isFavorite
-                    ? const Icon(Icons.favorite, color: Colors.red)
-                    : const Icon(Icons.favorite_border)
+                child: ScaleTransition(
+                        scale: Tween(begin: 0.7, end: 1.0).animate(
+                          CurvedAnimation(parent: controller, curve: Curves.easeOut)
+                        ),
+                        child: isFavorite
+                            ? const Icon(Icons.favorite, color: Colors.red)
+                            : const Icon(Icons.favorite_border)
+                )
             )
           ],
         ),
