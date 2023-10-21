@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:azblob/azblob.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:vando/models/product.dart';
-import 'package:vando/models/users.dart';
+import 'package:vendo/models/product.dart';
+import 'package:vendo/models/users.dart';
 import 'package:xml2json/xml2json.dart';
 import 'package:http/http.dart' as http;
 
