@@ -37,19 +37,34 @@ class _SearchScreenState extends State<SearchScreen> {
         )
       ),
       body: Container(
-        color: const Color(0xFFF4F5F9),
+        margin: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Search History',
+                Text('Riwayat Pencarian',
                     style: GoogleFonts.inter(
-                        fontSize: 21, color: Theme.of(context).colorScheme.onBackground)),
-                Text('Clear',
+                        fontSize: 21, fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onBackground)),
+                Text('Bersihkan',
+                    style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500,
+                        color: const Color(0xFF407EC7))),
+              ],
+            ),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Temukan Lebih Banyak',
+                    style: GoogleFonts.inter(
+                        fontSize: 21, fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onBackground)),
+                Text('Bersihkan',
                     style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500,
                         color: const Color(0xFF407EC7)))
-              ],
+              ]
             )
           ],
         ),
