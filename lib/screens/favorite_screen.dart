@@ -2,15 +2,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vando/models/database_service.dart';
+import 'package:vendo/models/database_service.dart';
+import 'package:vendo/screens/shopping_cart.dart';
 import '../models/product.dart';
 import '../models/users.dart';
 
 class FavoriteScreen extends StatefulWidget {
-  const FavoriteScreen({super.key, required this.favProducts, required this.removeFavProduct});
+  const FavoriteScreen({super.key, required this.favProducts, required this.removeFavProduct,
+    required this.onAddToCart, required this.productsOnCart,
+    required this.removeProductFromCart});
 
   final List<Product> favProducts;
+  final List<Product> productsOnCart;
+  final void Function(Product, int) removeProductFromCart;
   final void Function(Product) removeFavProduct;
+  final void Function(Product, int) onAddToCart;
 
   @override
   State<StatefulWidget> createState() => _FavoriteScreenState();
@@ -114,7 +120,13 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       const SizedBox() :
       GestureDetector(
           onTap: () {
-
+            for (var product in _favProducts) {
+              widget.onAddToCart(product, 1);
+            }
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    ShoppingCart(productsOnCart: widget.productsOnCart,
+                        removeProductFromCart: widget.removeProductFromCart)));
           },
           child: Container(
               width: double.infinity,
