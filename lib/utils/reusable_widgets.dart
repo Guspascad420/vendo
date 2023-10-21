@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timelines/timelines.dart';
+import 'package:vendo/utils/currency_format.dart';
 
 import '../models/product.dart';
 import '../screens/product_details.dart';
@@ -37,6 +38,73 @@ TextField reusableTextField(String text, bool isPasswordType,
     keyboardType: isPasswordType
         ? TextInputType.visiblePassword
         : TextInputType.emailAddress,
+  );
+}
+
+TextField reusableTextFieldWithIcon(String text, bool isPasswordType,
+    TextEditingController controller, Widget icon, [Color? borderColor, double? borderWidth]) {
+  return TextField(
+    controller: controller,
+    obscureText: isPasswordType,
+    enableSuggestions: !isPasswordType,
+    autocorrect: !isPasswordType,
+    cursorColor: Colors.black,
+    style: GoogleFonts.inter(
+        fontSize: 16,
+        color: Colors.black,
+        fontWeight: FontWeight.w500
+    ),
+    decoration: InputDecoration(
+      labelText: text,
+      prefixIcon: icon,
+      labelStyle: const TextStyle(color: Color(0xFF9CA3AF)),
+      filled: true,
+      floatingLabelBehavior: FloatingLabelBehavior.never,
+      fillColor: Colors.white.withOpacity(0.3),
+      enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(17.0),
+          borderSide: BorderSide(width: borderWidth ?? 1,
+              color: borderColor ?? const Color(0xFFBEC5D1))
+      ),
+      focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(17.0),
+          borderSide: const BorderSide(width: 2, color: Color(0xFF314797))
+      ),
+    ),
+    keyboardType: isPasswordType
+        ? TextInputType.visiblePassword
+        : TextInputType.emailAddress,
+  );
+}
+
+TextField reusablePhoneTextField(String text, TextEditingController controller,
+    Widget icon, [Color? borderColor, double? borderWidth]) {
+  return TextField(
+    controller: controller,
+    cursorColor: Colors.black,
+    style: GoogleFonts.inter(
+        fontSize: 16,
+        color: Colors.black,
+        fontWeight: FontWeight.w500
+    ),
+    decoration: InputDecoration(
+      labelText: text,
+      prefixIcon: icon,
+      labelStyle: const TextStyle(color: Color(0xFF9CA3AF)),
+      filled: true,
+      floatingLabelBehavior: FloatingLabelBehavior.never,
+      fillColor: Colors.white.withOpacity(0.3),
+      enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(17.0),
+          borderSide: BorderSide(width: borderWidth ?? 1,
+              color: borderColor ?? const Color(0xFFBEC5D1))
+      ),
+      focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(17.0),
+          borderSide: const BorderSide(width: 2, color: Color(0xFF314797))
+      ),
+    ),
+    keyboardType: TextInputType.phone
   );
 }
 
@@ -82,7 +150,7 @@ Widget productCard(BuildContext context, Product product, List<Product> products
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onBackground)),
-              Text('Rp. ${product.price}',
+              Text(CurrencyFormat.convertToIdr(product.price),
                   style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
