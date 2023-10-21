@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vando/screens/about_me.dart';
-import 'package:vando/screens/auth/welcome_page.dart';
-import 'package:vando/screens/umkm/umkm_onboarding.dart';
+import 'package:vendo/screens/about_me.dart';
+import 'package:vendo/screens/auth/welcome_page.dart';
+import 'package:vendo/screens/umkm/umkm_onboarding.dart';
 
 import '../../models/users.dart';
 
@@ -78,7 +78,7 @@ Widget userBiodata(BuildContext context, Users user) {
               color: const Color(0xFF868889))),
       const SizedBox(height: 35),
       profileMenuContent(
-          context, SvgPicture.asset('images/about_me.svg'),
+          context, const Icon(Icons.person_2_outlined),
           'Tentang Saya',
           () {
             Navigator.of(context).push(

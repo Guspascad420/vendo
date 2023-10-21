@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vando/models/category.dart';
-import 'package:vando/screens/umkm/finished_product_regist.dart';
-import 'package:vando/utils/reusable_widgets.dart';
+import 'package:vendo/models/category.dart';
+import 'package:vendo/screens/umkm/finished_product_regist.dart';
+import 'package:vendo/utils/reusable_widgets.dart';
 
 class ProductRegist extends StatefulWidget {
   const ProductRegist({super.key, required this.category});

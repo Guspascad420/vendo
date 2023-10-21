@@ -1,4 +1,4 @@
-name: vando
+name: vendo
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -45,6 +45,10 @@ dependencies:
   http: ^1.1.0
   firebase_auth: ^4.10.1
   timelines: ^0.1.0
+  intl: ^0.17.0
+  email_auth: ^1.1.1
+  google_maps_flutter: ^2.5.0
+  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +99,7 @@ flutter:
     - images/food_or_drinks.png
     - images/fashion.png
     - images/success_icon.png
+    - images/ic_profile_2.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

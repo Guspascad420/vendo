@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vendo/utils/currency_format.dart';
 import '../models/product.dart';
 import '../models/users.dart';
 
@@ -155,7 +156,7 @@ Widget bottomNavBar(BuildContext context, int subtotal, double valueAddedTax, in
                   style: GoogleFonts.inter(
                       fontSize: 21,
                       fontWeight: FontWeight.w600)),
-              Text("Rp. $totalCost",
+              Text(CurrencyFormat.convertToIdr(totalCost),
                   style: GoogleFonts.inter(
                       fontSize: 21,
                       fontWeight: FontWeight.w600))
@@ -190,7 +191,7 @@ Widget costsContent(String title, int cost) {
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xFF868889))),
-        Text("Rp. $cost",
+        Text(CurrencyFormat.convertToIdr(cost),
             style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
@@ -358,14 +359,17 @@ class _ProductOnCartState extends State<ProductOnCart> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Rp. ${widget.product.price}",
+                    Text(CurrencyFormat.convertToIdr(widget.product.price),
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: const Color(0xFF2A4399))),
-                    Text(widget.product.name,
-                        style: GoogleFonts.inter(
-                            fontSize: 17, fontWeight: FontWeight.bold)),
+                    SizedBox(
+                      width: 150,
+                      child: Text(widget.product.name,
+                            style: GoogleFonts.inter(
+                                fontSize: 17, fontWeight: FontWeight.bold))
+                    ),
                     Text('600ml',
                         style: GoogleFonts.inter(
                             fontSize: 15, color: const Color(0xFF868889)))

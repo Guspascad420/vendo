@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vando/models/users.dart';
-import 'package:vando/screens/auth/forget_password.dart';
-import 'package:vando/screens/main/main_screen.dart';
-import 'package:vando/utils/reusable_widgets.dart';
+import 'package:vendo/models/users.dart';
+import 'package:vendo/screens/auth/forget_password.dart';
+import 'package:vendo/screens/main/main_screen.dart';
+import 'package:vendo/utils/reusable_widgets.dart';
 
 import '../../models/database_service.dart';
 

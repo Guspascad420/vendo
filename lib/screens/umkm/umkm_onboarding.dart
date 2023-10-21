@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:vando/screens/umkm/merchant_info.dart';
+import 'package:vendo/screens/umkm/merchant_info.dart';
 import '../onboarding_page.dart';
 
 class UMKMOnboarding extends StatefulWidget {
