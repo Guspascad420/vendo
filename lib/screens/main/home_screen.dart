@@ -2,10 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:vando/models/product.dart';
-import 'package:vando/screens/complete_product_list.dart';
-import 'package:vando/screens/product_details.dart';
-import 'package:vando/screens/search_screen.dart';
+import 'package:vendo/models/product.dart';
+import 'package:vendo/screens/complete_product_list.dart';
+import 'package:vendo/screens/product_details.dart';
+import 'package:vendo/screens/search_screen.dart';
+import 'package:vendo/screens/vendo_map.dart';
 
 import '../../models/database_service.dart';
 import '../../models/users.dart';
@@ -151,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    child: Text('Find Vending Machines Nearby',
+                    child: Text('Temukan Vending Machine',
                         style: GoogleFonts.inter(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -170,7 +171,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 children: [
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const VendoMap()));
+                      },
                       child: Text('See all',
                           style: GoogleFonts.inter(
                               fontSize: 14,
