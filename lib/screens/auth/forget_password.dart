@@ -1,3 +1,4 @@
+import 'package:email_auth/email_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/reusable_widgets.dart';
@@ -10,7 +11,30 @@ class ForgetPassword extends StatefulWidget {
 }
 
 class _ForgetPasswordState extends State<ForgetPassword> {
+  late EmailAuth emailAuth;
   final TextEditingController _emailTextController = TextEditingController();
+  final validEmail = RegExp(
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
+  var remoteServerConfiguration = {
+    "server": "https://gustavo-smtp.azurewebsites.net",
+    "serverKey": "kes7Uo"
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    emailAuth = EmailAuth(sessionName: "Sample session");
+    emailAuth.config(remoteServerConfiguration);
+  }
+
+  void sendOtp() async {
+    var res = await emailAuth.sendOtp(recipientMail: _emailTextController.text, otpLength: 5);
+    if (res) {
+      debugPrint("OTP sent");
+    } else {
+      debugPrint("Gabisa bangsaatt");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +74,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     alignment: Alignment.bottomCenter,
                     margin: const EdgeInsets.only(bottom: 60),
                     child: ElevatedButton(
-                        onPressed: () { },
+                        onPressed: () {
+                                sendOtp();
+                              },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF314797),
                             shape: RoundedRectangleBorder(
