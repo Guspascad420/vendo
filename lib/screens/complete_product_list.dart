@@ -2,8 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vendo/models/voucher.dart';
 import 'package:vendo/screens/main/home_screen.dart';
-import 'package:vendo/screens/shopping_cart.dart';
+import 'package:vendo/screens/cart/shopping_cart.dart';
 import 'package:vendo/utils/scroll_to_hide_widget.dart';
 import 'package:vendo/utils/static_grid.dart';
 import '../models/database_service.dart';
@@ -47,7 +48,6 @@ class _CompleteProductListState extends State<CompleteProductList> {
   late int _productsOnCartCount;
   FirebaseAuth auth = FirebaseAuth.instance;
   bool _isVisible = true;
-
 
   @override
   void initState() {
@@ -96,12 +96,18 @@ class _CompleteProductListState extends State<CompleteProductList> {
         extendBody: true,
         appBar: AppBar(
           surfaceTintColor: Colors.white,
-          leading: const Icon(Icons.arrow_back),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back)
+          ),
           backgroundColor: Theme.of(context).colorScheme.background,
           title: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: const Color(0xFFE6E7E9)),
+                color: const Color(0xFFE6E7E9)
+            ),
             margin: const EdgeInsets.symmetric(vertical: 30),
             padding: const EdgeInsets.symmetric(vertical: 5),
             width: 310,
@@ -147,7 +153,8 @@ class _CompleteProductListState extends State<CompleteProductList> {
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.background))),
+                            color: Theme.of(context).colorScheme.background))
+                ),
             )
         )
             : const SizedBox(),
