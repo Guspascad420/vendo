@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vendo/models/database_service.dart';
+import 'package:vendo/screens/product_details/review_page.dart';
 import 'package:vendo/utils/currency_format.dart';
-import '../models/product.dart';
+import '../../models/product.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails(
@@ -20,7 +21,7 @@ class ProductDetails extends StatefulWidget {
   final void Function()? setIsProductOnCart;
 
   @override
-  State<StatefulWidget> createState() => _ProductDetailsState();
+  State<ProductDetails> createState() => _ProductDetailsState();
 }
 
 class _ProductDetailsState extends State<ProductDetails>
@@ -77,7 +78,14 @@ class _ProductDetailsState extends State<ProductDetails>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: const Icon(Icons.arrow_back)),
+      appBar: AppBar(
+          leading:  IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back)
+          )
+      ),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -224,12 +232,25 @@ Widget productDetailsHeader(
                 color: Theme.of(context).colorScheme.onBackground)),
         Row(
           children: [
-            Text('4.5',
-                style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onBackground)),
-            RatingBar.builder(
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ReviewPage(product: product)));
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: const Color(0xFF2A4399)
+                ),
+                child: Text('4.5',
+                    style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white)),
+              )
+            ),
+            RatingBar(
               itemSize: 25,
               initialRating: 4.5,
               minRating: 1,
@@ -238,9 +259,10 @@ Widget productDetailsHeader(
               allowHalfRating: true,
               itemCount: 5,
               itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
+              ratingWidget: RatingWidget(
+                  full: const Icon(Icons.star, color: Colors.amber,),
+                  half: const Icon(Icons.star_half, color: Colors.amber),
+                  empty: const Icon(Icons.star_border)
               ),
               onRatingUpdate: (rating) {},
             )
