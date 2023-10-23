@@ -203,8 +203,11 @@ class _CreateAccountState extends State<CreateAccount> {
   final TextEditingController _fullNameTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController _phoneTextController = TextEditingController();
+
   final validEmail = RegExp(
-      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
+  );
   final validPassword = RegExp(r"^(?=.*[0-9]).{8,}$");
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -248,7 +251,8 @@ class _CreateAccountState extends State<CreateAccount> {
         ),
         const SizedBox(height: 10),
         reusableTextField(
-            "Contoh : namaemail@emailkamu.com", true, _passwordTextController),
+            "Contoh : namaemail@emailkamu.com", true, _passwordTextController
+        ),
         _isPasswordValid
             ? const SizedBox()
             : Container(
@@ -258,10 +262,17 @@ class _CreateAccountState extends State<CreateAccount> {
                   textAlign: TextAlign.right,
                   style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
                 )),
+        const SizedBox(height: 10),
+        Text(
+          'Nomor telepon',
+          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+        reusablePhoneTextField("Contoh: 082918282911", _phoneTextController),
         const SizedBox(height: 30),
         ElevatedButton(
             onPressed: _passwordTextController.text.isEmpty ||
-                    _emailTextController.text.isEmpty
+                    _emailTextController.text.isEmpty || _fullNameTextController.text.isEmpty
+                    || _phoneTextController.text.isEmpty
                 ? null
                 : () {
                     setState(() {
@@ -291,7 +302,9 @@ class _CreateAccountState extends State<CreateAccount> {
                             fullName: _fullNameTextController.text,
                             email: _emailTextController.text,
                             productsOnCart: [],
-                            favProducts: []);
+                            favProducts: [],
+                            phoneNumber: _phoneTextController.text
+                        );
                         service.createNewUser(user);
                         setState(() {
                           _isLoading = false;
@@ -311,7 +324,9 @@ class _CreateAccountState extends State<CreateAccount> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 105, vertical: 12)),
             child: _isLoading
-                ? const CircularProgressIndicator()
+                ? const CircularProgressIndicator(
+                    color: Colors.white,
+                  )
                 : Text('Sign Up',
                     style: GoogleFonts.inter(
                         fontSize: 18,
@@ -442,7 +457,9 @@ class _LoginState extends State<Login> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 105, vertical: 12)),
             child: _isLoading
-                ? const CircularProgressIndicator()
+                ? const CircularProgressIndicator(
+                    color: Colors.white,
+                  )
                 : Text('Login',
                     style: GoogleFonts.inter(
                         fontSize: 18,
