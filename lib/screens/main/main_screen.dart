@@ -7,7 +7,7 @@ import 'package:vendo/screens/favorite_screen.dart';
 import 'package:vendo/screens/main/home_screen.dart';
 import 'package:vendo/screens/main/order_history.dart';
 import 'package:vendo/screens/main/profile_screen.dart';
-import 'package:vendo/screens/shopping_cart.dart';
+import 'package:vendo/screens/cart/shopping_cart.dart';
 
 import '../../models/database_service.dart';
 import '../../models/product.dart';
@@ -140,18 +140,20 @@ class _MainScreenState extends State<MainScreen> {
                 items: [
                   BottomNavigationBarItem(
                       icon: SvgPicture.asset('images/ic_home.svg',
-                          color: const Color(0xFF4B5563)),
+                          color: const Color(0xFFBABABB)),
                       activeIcon: SvgPicture.asset('images/ic_home.svg'),
                       label: ''),
                   BottomNavigationBarItem(
-                      icon: SvgPicture.asset('images/ic_orders.svg'),
+                      icon: SvgPicture.asset('images/ic_orders.svg',
+                        color: const Color(0xFFBABABB)),
                       activeIcon: SvgPicture.asset('images/ic_orders.svg',
-                          color: const Color(0xFF314797)),
+                          color: const Color(0xFF2A4399)),
                       label: ''),
                   BottomNavigationBarItem(
-                      icon: SvgPicture.asset('images/ic_profile.svg'),
+                      icon: SvgPicture.asset('images/ic_profile.svg',
+                          color: const Color(0xFFBABABB)),
                       activeIcon: SvgPicture.asset('images/ic_profile.svg',
-                          color: const Color(0xFF314797)),
+                          color: const Color(0xFF2A4399)),
                       label: '')
                 ],
                 currentIndex: _selectedIndex,
