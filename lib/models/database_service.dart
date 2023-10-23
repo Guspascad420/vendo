@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:azblob/azblob.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vendo/models/product.dart';
+import 'package:vendo/models/review.dart';
 import 'package:vendo/models/users.dart';
 import 'package:xml2json/xml2json.dart';
 import 'package:http/http.dart' as http;
@@ -29,9 +30,17 @@ class DatabaseService {
       'products_on_cart': FieldValue.arrayUnion([product.toCartMap(quantity)])
     });
   }
+  
+  addUserReview(Review review) async {
+    await db.collection("reviews").add(review.toMap());
+  }
 
-  signInUser(String email, String password) async {
-
+  Future<List<Review>> retrieveDummyReviews() async {
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+    await db.collection("reviews").get();
+    return snapshot.docs
+        .map((docSnapshot) => Review.fromDocumentSnapshot(docSnapshot))
+        .toList();
   }
 
   removeProductFromCart(String email, Product product, int quantity) async {
