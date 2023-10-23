@@ -22,6 +22,13 @@ class _AboutMeState extends State<AboutMe> {
   late final TextEditingController _currentPassTextController;
   late final TextEditingController _newPassTextController;
   late final TextEditingController _confirmPassTextController;
+  final validEmail = RegExp(
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
+  );
+
+  void handleBioChanges() {
+
+  }
 
   @override
   void initState() {
