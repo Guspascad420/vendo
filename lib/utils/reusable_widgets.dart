@@ -4,7 +4,7 @@ import 'package:timelines/timelines.dart';
 import 'package:vendo/utils/currency_format.dart';
 
 import '../models/product.dart';
-import '../screens/product_details.dart';
+import '../screens/product_details/product_details.dart';
 
 TextField reusableTextField(String text, bool isPasswordType,
     TextEditingController controller, [Color? borderColor, double? borderWidth]) {
@@ -78,7 +78,7 @@ TextField reusableTextFieldWithIcon(String text, bool isPasswordType,
 }
 
 TextField reusablePhoneTextField(String text, TextEditingController controller,
-    Widget icon, [Color? borderColor, double? borderWidth]) {
+    [Widget? icon, Color? borderColor, double? borderWidth]) {
   return TextField(
     controller: controller,
     cursorColor: Colors.black,
@@ -226,6 +226,90 @@ Widget timelineView(int contentIndex) {
                   itemCount: 3
               )
           )
+      )
+  );
+}
+
+Widget shoppingBottomNavBar(BuildContext context, int subtotal,
+    double valueAddedTax, int totalCost, bool showVoucher,
+    void Function() onCheckoutPressed , [void Function()? onVoucherPressed]) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      if (showVoucher)
+        ElevatedButton(
+            onPressed: onVoucherPressed,
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF314797),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 70, vertical: 5)),
+            child: Text('Voucher',
+                style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white
+                ))
+        ),
+      const SizedBox(height: 10),
+      const Divider(),
+      const SizedBox(height: 10),
+      costsContent('Subtotal', subtotal),
+      const SizedBox(height: 10),
+      costsContent('Tax 11%', valueAddedTax.toInt()),
+      const SizedBox(height: 10),
+      costsContent('Biaya layanan', 1000),
+      const Divider(),
+      Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Total',
+                  style: GoogleFonts.inter(
+                      fontSize: 21,
+                      fontWeight: FontWeight.w600)),
+              Text(CurrencyFormat.convertToIdr(totalCost),
+                  style: GoogleFonts.inter(
+                      fontSize: 21,
+                      fontWeight: FontWeight.w600))
+            ],
+          )
+      ),
+      GestureDetector(
+          onTap: onCheckoutPressed,
+          child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 22),
+              color: const Color(0xFF2A4399),
+              child: Text('Checkout',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(fontSize: 18, color: Colors.white))
+          )
+      )
+    ],
+  );
+}
+
+Widget costsContent(String title, int cost) {
+  return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title,
+              style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF868889))),
+          Text(CurrencyFormat.convertToIdr(cost),
+              style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF868889)))
+        ],
       )
   );
 }
