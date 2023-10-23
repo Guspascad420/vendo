@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vendo/models/database_service.dart';
-import 'package:vendo/screens/shopping_cart.dart';
+import 'package:vendo/screens/cart/shopping_cart.dart';
 import '../models/product.dart';
 import '../models/users.dart';
 
