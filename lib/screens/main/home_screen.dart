@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vendo/models/product.dart';
 import 'package:vendo/screens/complete_product_list.dart';
-import 'package:vendo/screens/product_details.dart';
+import 'package:vendo/screens/product_details/product_details.dart';
 import 'package:vendo/screens/search_screen.dart';
 import 'package:vendo/screens/vendo_map.dart';
 
@@ -152,15 +152,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    child: Text('Temukan Vending Machine',
+                    child: Text('Lokasi Vending Machine',
                         style: GoogleFonts.inter(
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onBackground)),
                   ),
                   SizedBox(
                     width: 200,
-                    child: Text('Check your city\'s Nearby Vending Machine',
+                    child: Text('Temukan Vending Machine di sekitar anda',
                         style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
