@@ -1,3 +1,3 @@
 enum Category {
-  foodOrDrinks, fashion
+  all, foodOrBeverage, fashion, food, beverage
 }
