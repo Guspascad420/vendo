@@ -40,7 +40,7 @@ class ProductRegistCategory extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                categoryCard(context, Category.foodOrDrinks, 'images/food_or_drinks.png'),
+                categoryCard(context, Category.foodOrBeverage, 'images/food_or_drinks.png'),
                 const SizedBox(width: 7),
                 categoryCard(context, Category.fashion, 'images/fashion.png')
               ],
@@ -53,7 +53,7 @@ class ProductRegistCategory extends StatelessWidget {
 }
 
 Widget categoryCard(BuildContext context, Category category, String imageRes) {
-  String title = category == Category.foodOrDrinks
+  String title = category == Category.foodOrBeverage
       ? "Makanan / Minuman" : "Fashion";
   return GestureDetector(
     onTap: () {
