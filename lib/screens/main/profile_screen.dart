@@ -137,6 +137,7 @@ Widget profileMenuContent(BuildContext context, Widget icon, String title,
     [void Function()? onMenuTapped]) {
   return
     GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onMenuTapped,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10),
