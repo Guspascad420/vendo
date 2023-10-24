@@ -150,6 +150,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
       if (!allFoodOrBeverage && !allFashion) {
         debugPrint("You cannot");
       } else {
+        setState(() {
+          _isVoucherEnabled = true;
+        });
         _applyDiscount();
       }
     });
