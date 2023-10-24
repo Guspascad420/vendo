@@ -54,18 +54,18 @@ class _SearchScreenState extends State<SearchScreen> {
               ],
             ),
             const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Temukan Lebih Banyak',
-                    style: GoogleFonts.inter(
-                        fontSize: 21, fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onBackground)),
-                Text('Bersihkan',
-                    style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500,
-                        color: const Color(0xFF407EC7)))
-              ]
-            )
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text('Temukan Lebih Banyak',
+            //         style: GoogleFonts.inter(
+            //             fontSize: 21, fontWeight: FontWeight.w600,
+            //             color: Theme.of(context).colorScheme.onBackground)),
+            //     Text('Bersihkan',
+            //         style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500,
+            //             color: const Color(0xFF407EC7)))
+            //   ]
+            // )
           ],
         ),
       ),
