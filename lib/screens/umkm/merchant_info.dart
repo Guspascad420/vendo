@@ -11,7 +11,6 @@ class MerchantInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> timelineContent = ["Atur Informasi Toko", "Daftarkan Produk", "Validasi"];
     final TextEditingController _nameTextController = TextEditingController();
     final TextEditingController _emailTextController = TextEditingController();
     final TextEditingController _phoneTextController = TextEditingController();
