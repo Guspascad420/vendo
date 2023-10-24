@@ -104,6 +104,9 @@ flutter:
     - images/star_border.svg
     - images/vendo_marker.png
     - images/qris.png
+    - images/shopee_pay.png
+    - images/gopay.png
+    - images/rosa_stik_kentang.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
