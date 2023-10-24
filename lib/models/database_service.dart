@@ -21,14 +21,21 @@ class DatabaseService {
     return data;
   }
 
-  createNewUser(Users user) async {
-    await db.collection("users").doc(user.email).set(user.toMap());
+  createNewUser(Users user, String uid) async {
+    await db.collection("users").doc(uid).set(user.toMap());
   }
 
-  addProductToCart(String email, Product product, int quantity) async {
-    await db.collection("users").doc(email).update({
+  addProductToCart(String id, Product product, int quantity) async {
+    await db.collection("users").doc(id).update({
       'products_on_cart': FieldValue.arrayUnion([product.toCartMap(quantity)])
     });
+  }
+
+  updateUserBio(String id, String newFullName,
+      String newEmail, String newPhoneNumber) async {
+    await db.collection("users").doc(id).update({"fullName" : newFullName});
+    await db.collection("users").doc(id).update({"email" : newEmail});
+    await db.collection("users").doc(id).update({"phone_number" : newPhoneNumber});
   }
   
   addUserReview(Review review) async {
@@ -43,27 +50,27 @@ class DatabaseService {
         .toList();
   }
 
-  removeProductFromCart(String email, Product product, int quantity) async {
-    await db.collection("users").doc(email).update({
+  removeProductFromCart(String id, Product product, int quantity) async {
+    await db.collection("users").doc(id).update({
       'products_on_cart': FieldValue.arrayRemove([product.toCartMap(quantity)])
     });
   }
 
-  addProductToFavorite(String email, Product product) async {
-    await db.collection("users").doc(email).update({
+  addProductToFavorite(String id, Product product) async {
+    await db.collection("users").doc(id).update({
       'fav_products': FieldValue.arrayUnion([product.toFavMap()])
     });
   }
 
-  removeProductFromFavorite(String email, Product product) async {
-    await db.collection("users").doc(email).update({
+  removeProductFromFavorite(String id, Product product) async {
+    await db.collection("users").doc(id).update({
       'fav_products': FieldValue.arrayRemove([product.toFavMap()])
     });
   }
 
-  Future<Users> retrieveUserData(String email) async {
+  Future<Users> retrieveUserData(String id) async {
     DocumentSnapshot<Map<String, dynamic>> snapshot =
-        await db.collection("users").doc(email).get();
+        await db.collection("users").doc(id).get();
     return Users.fromDocumentSnapshot(snapshot);
   }
 
@@ -73,6 +80,18 @@ class DatabaseService {
     return snapshot.docs
         .map((docSnapshot) => Product.fromDocumentSnapshot(docSnapshot))
         .toList();
+  }
+
+  Future<List<Product>> retrievePromotionalProducts() async {
+    List<Product> promotionalProducts = [];
+    DocumentSnapshot<Map<String, dynamic>> firstProductsnapshot =
+    await db.collection("products").doc("rsN23lK448sPO43Qc0PW").get();
+    DocumentSnapshot<Map<String, dynamic>> secondProductSnapshot =
+    await db.collection("products").doc("0gt28KKSRbVXEo0dhhIT").get();
+
+    promotionalProducts.add(Product.fromDocumentSnapshot(firstProductsnapshot));
+    promotionalProducts.add(Product.fromDocumentSnapshot(secondProductSnapshot));
+    return promotionalProducts;
   }
 
   Future<List<Product>> retrieveAllProducts() async {
