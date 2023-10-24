@@ -209,11 +209,13 @@ class _CreateAccountState extends State<CreateAccount> {
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
   );
   final validPassword = RegExp(r"^(?=.*[0-9]).{8,}$");
+  final validPhoneNumber = RegExp(r"^(\+62|62|0)8[1-9][0-9]{6,9}$");
 
   FirebaseAuth auth = FirebaseAuth.instance;
   DatabaseService service = DatabaseService();
   bool _isEmailValid = true;
   bool _isPasswordValid = true;
+  bool _isPhoneNumberValid = false;
   bool _isLoading = false;
 
   @override
@@ -267,6 +269,16 @@ class _CreateAccountState extends State<CreateAccount> {
           'Nomor telepon',
           style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
         ),
+        _isPhoneNumberValid
+            ? const SizedBox()
+            : Container(
+                margin: const EdgeInsets.only(top: 7),
+                child: Text(
+                  'Format nomor telepon salah!',
+                  textAlign: TextAlign.right,
+                  style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
+                )
+              ),
         reusablePhoneTextField("Contoh: 082918282911", _phoneTextController),
         const SizedBox(height: 30),
         ElevatedButton(
@@ -292,7 +304,14 @@ class _CreateAccountState extends State<CreateAccount> {
                         : setState(() {
                             _isPasswordValid = false;
                           });
-                    if (_isPasswordValid && _isEmailValid) {
+                    validPhoneNumber.hasMatch(_phoneTextController.text)
+                        ? setState(() {
+                            _isPhoneNumberValid = true;
+                          })
+                        : setState(() {
+                            _isPhoneNumberValid = false;
+                          });
+                    if (_isPasswordValid && _isEmailValid && _isPhoneNumberValid) {
                       auth
                           .createUserWithEmailAndPassword(
                               email: _emailTextController.text,
@@ -305,7 +324,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             favProducts: [],
                             phoneNumber: _phoneTextController.text
                         );
-                        service.createNewUser(user);
+                        service.createNewUser(user, auth.currentUser!.uid);
                         setState(() {
                           _isLoading = false;
                         });
