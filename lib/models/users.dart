@@ -24,7 +24,7 @@ class Users {
 
   Users.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> doc)
       : fullName = doc.data()!["full_name"],
-        email = doc.id,
+        email = doc.data()!["email"],
         phoneNumber =  doc.data()!["phone_number"],
         productsOnCart = doc.data()?["products_on_cart"].cast<Map<String, dynamic>>(),
         favProducts = doc.data()?["fav_products"].cast<Map<String, dynamic>>();
