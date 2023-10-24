@@ -18,6 +18,12 @@ class PaymentScreen extends StatefulWidget {
 class _PaymentMethodState extends State<PaymentScreen> {
   PaymentMethod _method = PaymentMethod.qris;
 
+  void setPaymentMethod(PaymentMethod method) {
+    setState(() {
+      _method = method;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,11 +48,45 @@ class _PaymentMethodState extends State<PaymentScreen> {
       body: Column(
         children: [
           const Divider(),
+          paymentMethod("QRIS", PaymentMethod.qris, _method, setPaymentMethod),
+          paymentMethod("Shopeepay", PaymentMethod.shopeePay, _method, setPaymentMethod),
+          paymentMethod("Gopay", PaymentMethod.gopay, _method, setPaymentMethod),
           ListTile(
-            title: Text('QRIS',
+            title: Text('Metamask',
                 style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                )),
+            subtitle: Text('Coming soon',
+                style: GoogleFonts.inter(
+                    fontSize: 15,
+                    color: Colors.grey
+                )),
+            leading: Image.asset('images/metamask_fox.png', scale: 2.5,),
+          ),
+          const Divider()
+        ],
+      ),
+    );
+  }
+}
+
+Widget paymentMethod(String title, PaymentMethod value, PaymentMethod methodGroup,
+    void Function(PaymentMethod) setPaymentMethod,
+    ) {
+  return GestureDetector(
+    onTap: () {
+      setPaymentMethod(value);
+    },
+    child: Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          child: ListTile(
+            title: Text(title,
+                style: GoogleFonts.inter(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                 )),
             subtitle: Text('Biaya Penanganan 0%',
                 style: GoogleFonts.inter(
@@ -55,18 +95,16 @@ class _PaymentMethodState extends State<PaymentScreen> {
                 )),
             leading: Image.asset('images/qris.png', scale: 2.5,),
             trailing: Radio<PaymentMethod>(
-              value: PaymentMethod.qris,
-              groupValue: _method,
+              value: value,
+              groupValue: methodGroup,
               onChanged: (PaymentMethod? value) {
-                setState(() {
-                  _method = value!;
-                });
+                setPaymentMethod(value!);
               },
             ),
-          ),
-          const Divider()
-        ],
-      ),
-    );
-  }
+          )
+        ),
+        const Divider()
+      ],
+    ),
+  );
 }
