@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:vendo/models/location.dart';
 import 'package:vendo/models/product.dart';
 import 'package:vendo/screens/complete_product_list.dart';
 import 'package:vendo/screens/product_details/product_details.dart';
@@ -31,13 +32,38 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Product>> futureProductList;
+  late Future<List<Product>> futurePromotionalProducts;
   DatabaseService service = DatabaseService();
+  final List<Location> _vmLocations = Location.getLocations();
   final PageController controller = PageController();
+
+  void navigateToMachineLocation(Location vmLocation) {
+    Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => VendoMap(vmLocation: vmLocation)
+      )
+    );
+  }
+
+  void navigateToProductDetails(Product product) {
+    Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ProductDetails(
+              product: product,
+              isFavorite: widget.isFavorite(product),
+              productsOnCart: widget.productsOnCart,
+              onIconPressed: widget.setFavProduct,
+              onAddToCart: widget.addProductToCart,
+          )
+        )
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     futureProductList = service.retrieveFourProducts();
+    futurePromotionalProducts = service.retrievePromotionalProducts();
   }
 
   @override
@@ -68,12 +94,40 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )),
         const SizedBox(height: 10),
-        SizedBox(
-          height: 242,
-          child: PageView(
-            controller: controller,
-            children: [promotionalCardContent(), promotionalCardContent()],
-          ),
+        FutureBuilder(
+            future: futurePromotionalProducts,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return SizedBox(
+                  height: 242,
+                  child: PageView(
+                    controller: controller,
+                    children: [
+                      promotionalCardContent(
+                          snapshot.data![0],
+                          'Flash Offer',
+                          'We are here with the best '
+                              'soy milk in indonesia',
+                          const [ Color(0xFFFFE1B4), Color(0xFFFF9F06) ],
+                          navigateToProductDetails
+                      ),
+                      promotionalCardContent(
+                          snapshot.data![1],
+                          'Pendatang Baru!',
+                          "Asikkk Rosa Stik Kentang telah hadir!",
+                          const [ Color(0xFF00D756), Color(0xFF018AC5) ],
+                          navigateToProductDetails
+                      )
+                    ],
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
         ),
         const SizedBox(height: 10),
         SmoothPageIndicator(
@@ -188,21 +242,23 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        locationCard(
-            context,
-            'UB Library',
-            'Jl. Veteran, Ketawanggede, Kec. Lowokwaru',
-            'images/rectangle_387.png'),
+        for (var i = 0; i < 3; i++)
+          locationCard(
+              context,
+              _vmLocations[i],
+              'images/rectangle_387.png',
+              navigateToMachineLocation
+          ),
         const SizedBox(height: 40)
       ]),
     );
   }
 }
 
-Widget locationCard(
-    BuildContext context, String name, String address, String imageRes) {
+Widget locationCard(BuildContext context, Location vmLocation,
+    String imageRes, void Function(Location) onButtonPressed) {
   return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 10),
+    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
     child: Card(
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(
@@ -211,7 +267,7 @@ Widget locationCard(
       ),
       child: ListTile(
         leading: Image.asset(imageRes),
-        title: Text(name,
+        title: Text(vmLocation.name,
             style: GoogleFonts.inter(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -222,14 +278,16 @@ Widget locationCard(
             const Icon(Icons.location_on, color: Color(0xFF2A4399)),
             SizedBox(
                 width: 120,
-                child: Text(address,
+                child: Text(vmLocation.address,
                     style: GoogleFonts.inter(
                         fontSize: 12,
                         color: Theme.of(context).colorScheme.onBackground)))
           ],
         ),
         trailing: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              onButtonPressed(vmLocation);
+            },
             style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 backgroundColor: const Color(0xFF314797),
@@ -279,74 +337,80 @@ Widget categoryItem(String imageRes, String title, Color containerColor,
   );
 }
 
-Widget promotionalCardContent() {
-  return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 25),
-    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(30),
-      // Box decoration takes a gradient
-      gradient: const LinearGradient(
-        // Where the linear gradient begins and ends
-        begin: Alignment.topRight,
-        end: Alignment.bottomLeft,
-        // Add one stop for each color. Stops should increase from 0 to 1
-        colors: [
-          // Colors are easy thanks to Flutter's Colors class.
-          Color(0xFFFFE1B4),
-          Color(0xFFFF9F06)
-        ],
+Widget promotionalCardContent(
+    Product product,
+    String title,
+    String description,
+    List<Color> colors,
+    void Function(Product) onCardTapped,
+    ) {
+  return GestureDetector(
+    onTap: () { onCardTapped(product); },
+    behavior: HitTestBehavior.opaque,
+    child: Container(
+      margin: const EdgeInsets.symmetric(horizontal: 25),
+      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        // Box decoration takes a gradient
+        gradient: LinearGradient(
+          // Where the linear gradient begins and ends
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          // Add one stop for each color. Stops should increase from 0 to 1
+          colors: colors,
+        ),
       ),
-    ),
-    child: Row(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('D\'Sruput',
-                style: GoogleFonts.inter(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-            const SizedBox(height: 50),
-            Text('Flash Offer',
-                style: GoogleFonts.inter(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 150,
-              child: Text(
-                  'We are here with the best '
-                  'soy milk in indonesia',
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(product.name,
                   style: GoogleFonts.inter(
-                      fontSize: 10,
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: Colors.white)),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Text('Order',
+              const SizedBox(height: 50),
+              Text('Flash Offer',
+                  style: GoogleFonts.inter(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: 150,
+                child: Text(
+                    description,
                     style: GoogleFonts.inter(
                         fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: Colors.white)),
-                const Icon(Icons.arrow_forward_ios_sharp, color: Colors.white)
-              ],
-            )
-          ],
-        ),
-        Expanded(
-            child: Container(
-                alignment: AlignmentDirectional.centerEnd,
-                margin: const EdgeInsets.only(right: 10),
-                child: Image.asset(
-                  'images/d_sruput.png',
-                  scale: 2.4,
-                )))
-      ],
-    ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Text('Order',
+                      style: GoogleFonts.inter(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
+                  const Icon(Icons.arrow_forward_ios_sharp, color: Colors.white)
+                ],
+              )
+            ],
+          ),
+          Expanded(
+              child: Container(
+                  alignment: AlignmentDirectional.centerEnd,
+                  margin: const EdgeInsets.only(right: 10),
+                  child: Image.network(
+                    "https://guspascad.blob.core.windows.net/democontainer/"
+                        "${product.imageRes}",
+                    scale: 2.4,
+                  )))
+        ],
+      ),
+    )
   );
 }
