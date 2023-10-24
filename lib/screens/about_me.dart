@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vendo/models/database_service.dart';
 import 'package:vendo/models/users.dart';
 
 import '../utils/reusable_widgets.dart';
@@ -25,9 +25,33 @@ class _AboutMeState extends State<AboutMe> {
   final validEmail = RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
   );
+  final validPhoneNumber = RegExp(r"^(\+62|62|0)8[1-9][0-9]{6,9}$");
+  DatabaseService service = DatabaseService();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  bool _isEmailValid = true;
+  bool _isPhoneNumberValid = true;
 
-  void handleBioChanges() {
-
+  void _handleBioChanges() {
+    validEmail.hasMatch(_emailTextController.text)
+        ? setState(() {
+            _isEmailValid = true;
+          })
+        : setState(() {
+            _isEmailValid = false;
+          });
+    validPhoneNumber.hasMatch(_phoneTextController.text)
+        ? setState(() {
+            _isPhoneNumberValid = true;
+          })
+        : setState(() {
+            _isPhoneNumberValid = false;
+          });
+    if (_isEmailValid && _fullNameTextController.text.isNotEmpty && _isPhoneNumberValid) {
+      service.updateUserBio(auth.currentUser!.uid,
+          _fullNameTextController.text, _emailTextController.text,
+          _phoneTextController.text);
+    }
+    Navigator.pop(context);
   }
 
   @override
@@ -35,7 +59,7 @@ class _AboutMeState extends State<AboutMe> {
     super.initState();
     _fullNameTextController = TextEditingController(text: widget.user.fullName);
     _emailTextController = TextEditingController(text: widget.user.email);
-    _phoneTextController = TextEditingController();
+    _phoneTextController = TextEditingController(text: widget.user.phoneNumber);
     _currentPassTextController = TextEditingController();
     _newPassTextController = TextEditingController();
     _confirmPassTextController = TextEditingController();
@@ -55,12 +79,15 @@ class _AboutMeState extends State<AboutMe> {
                   color: Theme.of(context).colorScheme.onBackground)),
           centerTitle: true
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(vertical: 22),
-        color: const Color(0xFF2A4399),
-        child: Text('Simpan Perubahan',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.inter(fontSize: 17, color: Colors.white)),
+      bottomNavigationBar: GestureDetector(
+        onTap: _handleBioChanges,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 22),
+          color: const Color(0xFF2A4399),
+          child: Text('Simpan Perubahan',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(fontSize: 17, color: Colors.white)),
+        )
       ),
       body: SingleChildScrollView(
         child: Stack(
@@ -86,6 +113,16 @@ class _AboutMeState extends State<AboutMe> {
                       const Icon(Icons.email_outlined),
                       const Color(0xFF314797), 2
                   ),
+                  _isEmailValid
+                      ? const SizedBox()
+                      : Container(
+                          margin: const EdgeInsets.only(top: 7),
+                          child: Text(
+                            'Format email salah!',
+                            textAlign: TextAlign.right,
+                            style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
+                          )
+                        ),
                   const SizedBox(height: 10),
                   reusablePhoneTextField(
                       "+62 87845245874", _phoneTextController,
