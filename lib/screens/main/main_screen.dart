@@ -43,12 +43,12 @@ class _MainScreenState extends State<MainScreen> {
 
   void setFavProduct(Product product) {
     if (!isFavorite(product)) {
-      service.addProductToFavorite(auth.currentUser!.email.toString(), product);
+      service.addProductToFavorite(auth.currentUser!.uid, product);
       setState(() {
         _favProducts.add(product);
       });
     } else {
-      service.removeProductFromFavorite(auth.currentUser!.email.toString(), product);
+      service.removeProductFromFavorite(auth.currentUser!.uid, product);
       setState(() {
         _favProducts.remove(product);
       });
@@ -57,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void removeFavProduct(Product product) {
     service.removeProductFromFavorite(
-        auth.currentUser!.email.toString(),
+        auth.currentUser!.uid,
         product
     );
     setState(() {
@@ -69,7 +69,7 @@ class _MainScreenState extends State<MainScreen> {
     var filteredProduct = _productsOnCart.where((item) => item.id == product.id)
         .toList();
     if (filteredProduct.isEmpty) {
-      service.addProductToCart(auth.currentUser!.email.toString(),
+      service.addProductToCart(auth.currentUser!.uid,
           product, quantity);
       var productMap = product.toCartMap(quantity);
       setState(() {
@@ -79,7 +79,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void removeProductFromCart(Product product, int quantity) {
-    service.removeProductFromCart(auth.currentUser!.email.toString(),
+    service.removeProductFromCart(auth.currentUser!.uid,
         product, quantity);
     setState(() {
       _productsOnCart.remove(product);
@@ -90,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     futureUserData =
-        service.retrieveUserData(auth.currentUser!.email.toString());
+        service.retrieveUserData(auth.currentUser!.uid);
     futureUserData.then((user) => setState(() {
       _favProducts = user.favProducts
           .map((product) => Product.toFavProduct(product))
@@ -170,19 +170,12 @@ PreferredSizeWidget homeAppBar(BuildContext context, List<Product> favProducts,
     void Function(Product, int) removeProductFromCart,
     void Function(Product, int) addProductToCart) {
   return AppBar(
+    toolbarHeight: 70,
     surfaceTintColor: Colors.white,
     leading: const SizedBox(),
     backgroundColor: Theme.of(context).colorScheme.background,
-    title: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(Icons.location_on, color: Color(0xFF314797)),
-        const SizedBox(width: 4),
-        Text('Universitas Brawijaya',
-            style:
-                GoogleFonts.inter(fontSize: 16, color: const Color(0xFF4B5563)))
-      ],
-    ),
+    centerTitle: true,
+    title: Image.asset('images/logo_vendo_1.png', scale: 7),
     actions: [
       GestureDetector(
           onTap: () {
