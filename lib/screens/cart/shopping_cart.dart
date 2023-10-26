@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vendo/screens/cart/product_on_cart.dart';
-import 'package:vendo/screens/payment_screen.dart';
+import 'package:vendo/screens/payments/payment_screen.dart';
 import 'package:vendo/utils/currency_format.dart';
 import '../../models/category.dart';
 import '../../models/product.dart';
@@ -29,25 +30,40 @@ class _ShoppingCartState extends State<ShoppingCart> {
   late List<Product> _productsOnCart;
   int _subtotal = 0;
   double _valueAddedTax = 0;
+  int _initialTotalCost = 0;
   int _totalCost = 0;
   bool _isVoucherEnabled = false;
-  bool allFoodOrBeverage = false;
-  bool allFashion = false;
-      int _discountPrice = 0;
+  bool _allFoodOrBeverage = false;
+  bool _allFashion = false;
+  int _discountPrice = 0;
   final List<Voucher> _vouchers = DummyVoucherData.getVouchers();
   int _selectedVoucherIndex = 20;
+  Category productCategory = Category.all;
 
-  Future<void> _handleCheckout() {
-    if (!allFoodOrBeverage && !allFashion) {
+  Future<void> _handleCheckout() async {
+    if (!_allFoodOrBeverage && !_allFashion) {
       _showCategoryExceptionDialog();
+    } else {
+      Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) =>
+                  PaymentScreen(subtotal: _subtotal, valueAddedTax: _valueAddedTax,
+                      totalCost: _totalCost, isVoucherEnabled: _isVoucherEnabled,
+                      discountPrice: _discountPrice, productCategory: productCategory)
+          )
+      );
     }
-    return Navigator.of(context).push(
-        MaterialPageRoute(
-        builder: (context) =>
-            PaymentScreen(subtotal: _subtotal, valueAddedTax: _valueAddedTax,
-                totalCost: _totalCost)
-        )
-    );
+  }
+
+  void _onDifferentCategoryRemoved() {
+    setState(() {
+      _allFoodOrBeverage = _productsOnCart.every(
+              (product) => product.category == "food" || product.category == "beverage"
+      );
+      _allFashion = _productsOnCart.every(
+              (product) => product.category == "fashion"
+      );
+    });
   }
 
   Future<void> _showCategoryExceptionDialog() {
@@ -55,11 +71,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          icon: Image.asset('images/danger.png'),
+          icon: Image.asset('images/danger.png', scale: 2.5,),
           surfaceTintColor: Theme.of(context).colorScheme.background,
           actionsAlignment: MainAxisAlignment.spaceBetween,
           content: Text('Produk makanan/minuman dan fashion tidak dapat dibeli '
               'secara bersamaan',
+              textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -73,7 +90,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.background,
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0)),
                         padding: const EdgeInsets.symmetric(
@@ -141,35 +158,48 @@ class _ShoppingCartState extends State<ShoppingCart> {
           });
       },
     ).then((value) {
-      bool allFoodOrBeverage = _productsOnCart.every(
-              (product) => product.category == "food" || product.category == "beverage"
-      );
-      bool allFashion = _productsOnCart.every(
-              (product) => product.category == "fashion"
-      );
-      if (!allFoodOrBeverage && !allFashion) {
+      if (!_allFoodOrBeverage && !_allFashion) {
         debugPrint("You cannot");
       } else {
-        setState(() {
-          _isVoucherEnabled = true;
-        });
-        _applyDiscount();
+        _applyOrRemoveVoucher();
       }
     });
   }
 
-  void _applyDiscount() {
-    if (_subtotal > _vouchers[_selectedVoucherIndex].minimumOrder) {
+
+  void _applyOrRemoveVoucher() {
+    if (_subtotal >= _vouchers[_selectedVoucherIndex].minimumOrder) {
       setState(() {
         _isVoucherEnabled = true;
         _discountPrice = (_subtotal * _vouchers[_selectedVoucherIndex].discountPercentage).toInt();
         if (_discountPrice > _vouchers[_selectedVoucherIndex].maxDiscount) {
-          _totalCost -= _vouchers[_selectedVoucherIndex].maxDiscount;
+          _discountPrice = _vouchers[_selectedVoucherIndex].maxDiscount;
+          _totalCost = _initialTotalCost - _discountPrice;
         } else {
-          _totalCost -= _discountPrice;
+          _totalCost = _initialTotalCost - _discountPrice;
         }
       });
+    } else {
+      setState(() {
+        _isVoucherEnabled = false;
+        _totalCost = _initialTotalCost;
+        _selectedVoucherIndex = 20;
+      });
+      _showSnackBar(context);
     }
+  }
+
+  void _showSnackBar(BuildContext context) {
+    final snackBar = SnackBar(
+      content: Text('Voucher tidak dapat diterapkan',
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          )),
+      backgroundColor: Colors.red,
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void _incrementCost(int index, int price, int initialPrice) {
@@ -178,7 +208,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
       _subtotal = _priceList.reduce((a, b) => a + b);
       _valueAddedTax = _subtotal * 0.11;
       _totalCost = _subtotal + _valueAddedTax.toInt() + 1000;
+      _initialTotalCost = _totalCost;
     });
+    if (_selectedVoucherIndex != 20) {
+      _applyOrRemoveVoucher();
+    }
   }
 
   void _decrementCost(int index, int price, int initialPrice) {
@@ -187,7 +221,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
       _subtotal = _priceList.reduce((a, b) => a + b);
       _valueAddedTax = _subtotal * 0.11;
       _totalCost = _subtotal + _valueAddedTax.toInt() + 1000;
+      _initialTotalCost = _totalCost;
     });
+    if (_selectedVoucherIndex != 20) {
+      _applyOrRemoveVoucher();
+    }
   }
 
   void _onProductRemoved(int index, int price) {
@@ -214,20 +252,32 @@ class _ShoppingCartState extends State<ShoppingCart> {
     _productsOnCart = widget.productsOnCart;
     if (_productsOnCart.isNotEmpty) {
       setState(() {
-        _priceList = _productsOnCart.map((product) => product.price).toList();
+        _priceList = _productsOnCart.map((product) => product.price * product.quantity!).toList();
         _subtotal = _priceList.reduce((a, b) => a + b);
         _valueAddedTax = _subtotal * 0.11;
         _totalCost = _subtotal + _valueAddedTax.toInt() + 1000;
+        _initialTotalCost = _totalCost;
       });
     }
     setState(() {
-      allFoodOrBeverage = _productsOnCart.every(
+      _allFoodOrBeverage = _productsOnCart.every(
               (product) => product.category == "food" || product.category == "beverage"
       );
-      allFashion = _productsOnCart.every((product) => product.category == "fashion");
+      _allFashion = _productsOnCart.every((product) => product.category == "fashion");
     });
-    if (!allFoodOrBeverage && !allFashion) {
-      _showVoucherDialog();
+    if (!_allFoodOrBeverage && !_allFashion) {
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        _showCategoryExceptionDialog();
+      });
+    }
+    else if (_allFoodOrBeverage) {
+      setState(() {
+        productCategory = Category.foodOrBeverage;
+      });
+    } else {
+      setState(() {
+        productCategory = Category.fashion;
+      });
     }
   }
 
@@ -265,13 +315,15 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 decrementCost: _decrementCost,
                 removeProductFromCart: widget.removeProductFromCart,
                 onProductRemoved: _onProductRemoved,
+                onDifferentCategoryRemoved: _onDifferentCategoryRemoved,
                 afterProductRemoved: widget.afterProductRemoved,
               );
           }),
       bottomNavigationBar:
           _productsOnCart.isEmpty ?
           const SizedBox() : shoppingBottomNavBar(context, _subtotal,
-              _valueAddedTax, _totalCost, true, _handleCheckout, _showVoucherDialog)
+              _valueAddedTax, _totalCost, true, _isVoucherEnabled, _handleCheckout,
+              _showVoucherDialog, _discountPrice)
     );
   }
 }
