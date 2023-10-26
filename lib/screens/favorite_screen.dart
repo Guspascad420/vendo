@@ -31,7 +31,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   Future<void> _showDialog(Product product) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
           surfaceTintColor: Theme.of(context).colorScheme.background,
@@ -178,6 +177,8 @@ Widget emptyFavorite(BuildContext context) {
 }
 
 Widget productOnFavorite(Product product, void Function(Product) onDeletePressed) {
+  String dimension = product.category == "food" || product.category == "fashion"
+      ? "gr" : "ml";
   return Container(
     height: 125,
     width: double.infinity,
@@ -213,7 +214,7 @@ Widget productOnFavorite(Product product, void Function(Product) onDeletePressed
                   Text(product.name,
                       style: GoogleFonts.inter(
                           fontSize: 17, fontWeight: FontWeight.bold)),
-                  Text('600ml',
+                  Text('${product.weight}$dimension',
                       style: GoogleFonts.inter(
                           fontSize: 15, color: const Color(0xFF868889)))
                 ])
