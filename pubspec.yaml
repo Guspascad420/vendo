@@ -49,6 +49,8 @@ dependencies:
   email_auth: ^1.1.1
   google_maps_flutter: ^2.5.0
   geolocator: ^10.1.0
+  webview_flutter: ^4.4.1
+  randomstring_dart: ^0.0.4
 
 dev_dependencies:
   flutter_test:
@@ -107,6 +109,7 @@ flutter:
     - images/shopee_pay.png
     - images/gopay.png
     - images/rosa_stik_kentang.png
+    - images/metamask_fox.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
