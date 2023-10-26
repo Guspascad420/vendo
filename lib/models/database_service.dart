@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vendo/models/product.dart';
 import 'package:vendo/models/review.dart';
 import 'package:vendo/models/users.dart';
+import 'package:vendo/models/order.dart' as order_data;
 import 'package:xml2json/xml2json.dart';
 import 'package:http/http.dart' as http;
 
@@ -66,6 +67,10 @@ class DatabaseService {
     await db.collection("users").doc(id).update({
       'fav_products': FieldValue.arrayRemove([product.toFavMap()])
     });
+  }
+
+  addOrder(order_data.Order order) async {
+    await db.collection("orders").add(order.toMap());
   }
 
   Future<Users> retrieveUserData(String id) async {
