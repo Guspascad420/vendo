@@ -48,7 +48,13 @@ class _ReviewPageState extends State<ReviewPage> {
                     MaterialPageRoute(
                       builder: (context) => CreateReview(product: widget.product)
                     )
-                  );
+                  ).then((value) {
+                    if (value) {
+                      setState(() {
+                        futureDummyReviews = service.retrieveDummyReviews();
+                      });
+                    }
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2A4399),
