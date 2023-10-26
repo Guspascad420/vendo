@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '635158928930',
     projectId: 'vando-22877',
     storageBucket: 'vando-22877.appspot.com',
-    iosBundleId: 'com.example.untitled',
+    iosBundleId: 'com.example.vando',
   );
 }
