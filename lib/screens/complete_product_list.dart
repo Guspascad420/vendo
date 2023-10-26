@@ -220,7 +220,8 @@ class _CompleteProductListState extends State<CompleteProductList> {
                             productCard(
                                 context, fashionProduct, widget.productsOnCart,
                                 widget.isFavorite(fashionProduct),
-                                widget.onIconTapped, widget.addProductToCart
+                                widget.onIconTapped, widget.addProductToCart,
+                                _setIsProductOnCart
                             )
                         ]),
                     const SizedBox(height: 90)
