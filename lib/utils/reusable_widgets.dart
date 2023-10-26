@@ -231,8 +231,9 @@ Widget timelineView(int contentIndex) {
 }
 
 Widget shoppingBottomNavBar(BuildContext context, int subtotal,
-    double valueAddedTax, int totalCost, bool showVoucher,
-    void Function() onCheckoutPressed , [void Function()? onVoucherPressed]) {
+    double valueAddedTax, int totalCost, bool showVoucher, bool isVoucherEnabled,
+    void Function() onCheckoutPressed ,
+    [void Function()? onVoucherPressed, int? discountPrice, bool? isLoading]) {
   return Column(
     mainAxisSize: MainAxisSize.min,
     children: [
@@ -260,6 +261,8 @@ Widget shoppingBottomNavBar(BuildContext context, int subtotal,
       costsContent('Tax 11%', valueAddedTax.toInt()),
       const SizedBox(height: 10),
       costsContent('Biaya layanan', 1000),
+      const SizedBox(height: 10),
+      isVoucherEnabled ? costsContent("Voucher", 0 - discountPrice!) : const SizedBox(),
       const Divider(),
       Container(
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
@@ -281,11 +284,13 @@ Widget shoppingBottomNavBar(BuildContext context, int subtotal,
       GestureDetector(
           onTap: onCheckoutPressed,
           child: Container(
+              alignment: Alignment.center,
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 22),
               color: const Color(0xFF2A4399),
-              child: Text('Checkout',
-                  textAlign: TextAlign.center,
+              child: isLoading != null && isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : Text('Checkout',
                   style: GoogleFonts.inter(fontSize: 18, color: Colors.white))
           )
       )
