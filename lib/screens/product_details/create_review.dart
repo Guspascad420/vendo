@@ -4,6 +4,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vendo/models/database_service.dart';
 import 'package:vendo/models/review.dart';
+import 'package:vendo/screens/main/main_screen.dart';
+import 'package:vendo/screens/product_details/review_page.dart';
 import '../../models/product.dart';
 import '../../models/users.dart';
 
@@ -28,7 +30,7 @@ class _CreateReviewState extends State<CreateReview> {
   @override
   void initState() {
     super.initState();
-    userData = service.retrieveUserData(auth.currentUser!.email.toString());
+    userData = service.retrieveUserData(auth.currentUser!.uid);
     userData.then((data) => setState(() {
       _username = data.fullName;
     }));
@@ -52,7 +54,7 @@ class _CreateReviewState extends State<CreateReview> {
                 onPressed: () {
                   Review review = Review(_username, _userRating, _descriptionTextController.text);
                   service.addUserReview(review);
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2A4399),
@@ -68,7 +70,8 @@ class _CreateReviewState extends State<CreateReview> {
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.background
                     ))
-            )
+            ),
+            const SizedBox(height: 20)
           ],
         ),
       body: Center(
