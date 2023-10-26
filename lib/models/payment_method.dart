@@ -1,3 +1,3 @@
 enum PaymentMethod {
-  qris, shopeePay, gopay
+  qris, shopeepay, gopay
 }
