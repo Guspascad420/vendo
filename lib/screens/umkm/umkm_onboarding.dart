@@ -36,7 +36,8 @@ class _UMKMOnboardingState extends State<UMKMOnboarding> {
             children: [
               TextButton(
                   onPressed: () {
-
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const MerchantInfo()));
                   },
                   child: Text('Skip',
                       style: GoogleFonts.inter(
