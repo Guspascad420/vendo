@@ -8,6 +8,7 @@ class Product {
   final int price;
   final String? category;
   final int? quantity;
+  final int weight;
 
   Product({this.id,
       required this.name,
@@ -15,15 +16,18 @@ class Product {
       this.description = "",
       required this.price,
       this.category = "",
-      this.quantity = 0});
+      this.quantity = 0,
+      required this.weight});
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'name': name,
       'image_res': imageRes,
       'description': description,
       'price': price,
-      'category': category
+      'category': category,
+      'weight': weight
     };
   }
 
@@ -33,17 +37,18 @@ class Product {
 
   Map<String, dynamic> toCartMap(int quantity) {
     return {'id': id, 'name': name, 'price': price, 'quantity': quantity,
-      'image_res': imageRes, 'category': category};
+      'image_res': imageRes, 'category': category, 'weight': weight};
   }
   
   factory Product.toProductOnCart(Map<String, dynamic> productMap) {
     return Product(id: productMap['id'], name: productMap['name'], imageRes: productMap['image_res'],
-        price: productMap['price'], quantity: productMap["quantity"], category: productMap["category"]);
+        price: productMap['price'], quantity: productMap["quantity"], category: productMap["category"],
+        weight: productMap['weight']);
   }
 
   factory Product.toFavProduct(Map<String, dynamic> productMap) {
     return Product(id: productMap['id'], name: productMap['name'], imageRes: productMap['image_res'],
-        price: productMap['price']);
+        price: productMap['price'], weight: productMap['weight']);
   }
 
 
@@ -53,6 +58,7 @@ class Product {
         imageRes = doc.data()!["image_res"],
         description = doc.data()?["description"],
         price = doc.data()!["price"],
-        category = doc.data()?["category"] ,
+        category = doc.data()?["category"],
+        weight = doc.data()!["weight"],
         quantity = doc.data()?["quantity"];
 }
