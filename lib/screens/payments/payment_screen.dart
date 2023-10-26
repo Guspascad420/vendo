@@ -1,27 +1,84 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vendo/models/payment_method.dart';
+import 'package:vendo/screens/payments/ewallet_payment.dart';
+import 'package:vendo/screens/payments/qris_payment.dart';
 import 'package:vendo/utils/reusable_widgets.dart';
+import 'package:http/http.dart' as http;
+
+import '../../models/category.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key, required this.subtotal,
-    required this.valueAddedTax, required this.totalCost});
+    required this.valueAddedTax, required this.totalCost,
+    required this.isVoucherEnabled, required this.discountPrice,
+    required this.productCategory});
 
   final int subtotal;
   final double valueAddedTax;
   final int totalCost;
+  final bool isVoucherEnabled;
+  final int discountPrice;
+  final Category productCategory;
 
   @override
-  State<StatefulWidget> createState() => _PaymentMethodState();
+  State<PaymentScreen> createState() => _PaymentMethodState();
 }
 
 class _PaymentMethodState extends State<PaymentScreen> {
   PaymentMethod _method = PaymentMethod.qris;
+  bool _isLoading = false;
 
   void setPaymentMethod(PaymentMethod method) {
     setState(() {
       _method = method;
     });
+  }
+
+  Future<void> _makePayment() async {
+    setState(() {
+      _isLoading = true;
+    });
+    http.post(
+      Uri.parse('http://192.168.18.42:8080/api/charge'),
+      body: jsonEncode(<String, dynamic> {
+        'payment_type': _method.name,
+        'gross_amount': 30000
+      })
+    ).then((response){
+      if (response.statusCode == 201) {
+        var data = jsonDecode(response.body) as Map<String, dynamic>;
+        setState(() {
+          _isLoading = false;
+        });
+        if (_method == PaymentMethod.qris) {
+          debugPrint(data["qr_code_url"]);
+          Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => QrisPayment(totalCost: widget.totalCost,
+                      qrisImageRes: data["qr_code_url"],
+                      transactionId: data["transaction_id"],
+                      productCategory: widget.productCategory)
+              )
+          );
+        } else {
+          debugPrint(data["deeplink_redirect"]);
+          Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => EWalletPayment(totalCost: widget.totalCost,
+                      deeplinkRedirect: data["deeplink_redirect"],
+                      transactionId: data["transaction_id"],
+                      productCategory: widget.productCategory)
+              )
+          );
+        }
+      } else  {
+        throw Exception('Failed to post request');
+      }
+    });
+
   }
 
   @override
@@ -44,13 +101,16 @@ class _PaymentMethodState extends State<PaymentScreen> {
           centerTitle: true
       ),
       bottomNavigationBar: shoppingBottomNavBar(context, widget.subtotal,
-          widget.valueAddedTax, widget.totalCost, false, () { }),
+          widget.valueAddedTax, widget.totalCost, false, widget.isVoucherEnabled,
+          _makePayment, null, widget.discountPrice, _isLoading),
       body: Column(
         children: [
           const Divider(),
-          paymentMethod("QRIS", PaymentMethod.qris, _method, setPaymentMethod),
-          paymentMethod("Shopeepay", PaymentMethod.shopeePay, _method, setPaymentMethod),
-          paymentMethod("Gopay", PaymentMethod.gopay, _method, setPaymentMethod),
+          paymentMethod("QRIS", PaymentMethod.qris, _method, 'images/qris.png', setPaymentMethod),
+          paymentMethod("Shopeepay", PaymentMethod.shopeepay, _method,
+              'images/shopee_pay.png', setPaymentMethod),
+          paymentMethod("Gopay", PaymentMethod.gopay,
+              _method, 'images/gopay.png', setPaymentMethod),
           ListTile(
             title: Text('Metamask',
                 style: GoogleFonts.inter(
@@ -72,6 +132,7 @@ class _PaymentMethodState extends State<PaymentScreen> {
 }
 
 Widget paymentMethod(String title, PaymentMethod value, PaymentMethod methodGroup,
+    String imageRes,
     void Function(PaymentMethod) setPaymentMethod,
     ) {
   return GestureDetector(
@@ -93,7 +154,7 @@ Widget paymentMethod(String title, PaymentMethod value, PaymentMethod methodGrou
                     fontSize: 15,
                     color: Colors.grey
                 )),
-            leading: Image.asset('images/qris.png', scale: 2.5,),
+            leading: Image.asset(imageRes, scale: 2.5,),
             trailing: Radio<PaymentMethod>(
               value: value,
               groupValue: methodGroup,
