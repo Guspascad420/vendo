@@ -11,7 +11,7 @@ class ProductOnCart extends StatefulWidget {
         required this.incrementCost, required this.decrementCost,
         required this.removeProductFromCart,
         required this.onProductRemoved,
-        this.afterProductRemoved});
+        this.afterProductRemoved, required this.onDifferentCategoryRemoved});
 
   final Product product;
   final int index;
@@ -19,6 +19,7 @@ class ProductOnCart extends StatefulWidget {
   final void Function(int, int, int) decrementCost;
   final void Function(Product, int) removeProductFromCart;
   final void Function(int, int) onProductRemoved;
+  final void Function() onDifferentCategoryRemoved;
   final void Function(Product)? afterProductRemoved;
 
   @override
@@ -28,12 +29,15 @@ class ProductOnCart extends StatefulWidget {
 class _ProductOnCartState extends State<ProductOnCart> {
   int _quantity = 0;
   late int _price;
+  String dimension = "";
 
   @override
   void initState() {
     super.initState();
     _quantity = widget.product.quantity!;
     _price = widget.product.price * _quantity;
+    dimension = widget.product.category == "food" ||
+        widget.product.category == "fashion" ? "gr" : "ml";
   }
 
   Future<void> _showRemoveDialog(Product product) async {
@@ -74,6 +78,7 @@ class _ProductOnCartState extends State<ProductOnCart> {
                     widget.afterProductRemoved!(widget.product);
                   }
                   widget.removeProductFromCart(widget.product, _quantity);
+                  widget.onDifferentCategoryRemoved();
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -155,7 +160,7 @@ class _ProductOnCartState extends State<ProductOnCart> {
                             style: GoogleFonts.inter(
                                 fontSize: 17, fontWeight: FontWeight.bold))
                     ),
-                    Text('600ml',
+                    Text('${widget.product.weight}$dimension',
                         style: GoogleFonts.inter(
                             fontSize: 15, color: const Color(0xFF868889)))
                   ])
