@@ -108,7 +108,7 @@ TextField reusablePhoneTextField(String text, TextEditingController controller,
   );
 }
 
-Widget productCard(BuildContext context, Product product, List<Product> productsOnCart,
+Widget productCard(BuildContext context, Product product,
     bool isFavorite,
     void Function(Product) onIconTapped,
     void Function(Product, int) onAddToCart,
@@ -121,7 +121,7 @@ Widget productCard(BuildContext context, Product product, List<Product> products
     onTap: () {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => ProductDetails(product: product, isFavorite: isFavorite,
-              productsOnCart: productsOnCart, onIconPressed: onIconTapped,
+              onIconPressed: onIconTapped,
               onAddToCart: onAddToCart, setIsProductOnCart: setIsProductOnCart)));
     },
     child: Card(
@@ -133,8 +133,8 @@ Widget productCard(BuildContext context, Product product, List<Product> products
         child: Container(
           width: 145,
           margin: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.start,
             children: [
               SizedBox(
                 width: double.infinity,
@@ -162,7 +162,7 @@ Widget productCard(BuildContext context, Product product, List<Product> products
 }
 
 Widget productCardHeader(
-    BuildContext context, String title, void Function() onTextPressed) {
+    BuildContext context, String title, String subtitle, [void Function()? onTextPressed]) {
   return Container(
     padding: const EdgeInsets.only(left: 20, right: 10),
     child: Row(
@@ -174,9 +174,9 @@ Widget productCardHeader(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onBackground)),
-          Text('Best of the today\'s updated food list',
+          Text(subtitle,
               style: GoogleFonts.inter(
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: const Color(0xFF6B7280)))
         ]),
