@@ -9,12 +9,13 @@ import 'package:vendo/utils/reusable_widgets.dart';
 import 'package:http/http.dart' as http;
 
 import '../../models/category.dart';
+import '../../models/product.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key, required this.subtotal,
     required this.valueAddedTax, required this.totalCost,
     required this.isVoucherEnabled, required this.discountPrice,
-    required this.productCategory});
+    required this.productCategory, required this.productsOnCart});
 
   final int subtotal;
   final double valueAddedTax;
@@ -22,6 +23,7 @@ class PaymentScreen extends StatefulWidget {
   final bool isVoucherEnabled;
   final int discountPrice;
   final Category productCategory;
+  final List<Product> productsOnCart;
 
   @override
   State<PaymentScreen> createState() => _PaymentMethodState();
@@ -42,7 +44,7 @@ class _PaymentMethodState extends State<PaymentScreen> {
       _isLoading = true;
     });
     http.post(
-      Uri.parse('http://192.168.18.42:8080/api/charge'),
+      Uri.parse('https://midtrans-go-api--6h08mix.lemonpond-99927c12.southeastasia.azurecontainerapps.io/api/charge'),
       body: jsonEncode(<String, dynamic> {
         'payment_type': _method.name,
         'gross_amount': 30000
@@ -60,7 +62,8 @@ class _PaymentMethodState extends State<PaymentScreen> {
                   builder: (context) => QrisPayment(totalCost: widget.totalCost,
                       qrisImageRes: data["qr_code_url"],
                       transactionId: data["transaction_id"],
-                      productCategory: widget.productCategory)
+                      productCategory: widget.productCategory,
+                      productsOnCart: widget.productsOnCart)
               )
           );
         } else {
@@ -70,7 +73,8 @@ class _PaymentMethodState extends State<PaymentScreen> {
                   builder: (context) => EWalletPayment(totalCost: widget.totalCost,
                       deeplinkRedirect: data["deeplink_redirect"],
                       transactionId: data["transaction_id"],
-                      productCategory: widget.productCategory)
+                      productCategory: widget.productCategory,
+                      productsOnCart: widget.productsOnCart)
               )
           );
         }
