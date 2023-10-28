@@ -4,12 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vendo/models/location.dart';
 import 'package:vendo/models/product.dart';
-import 'package:vendo/screens/complete_product_list.dart';
+import 'package:vendo/screens/product_list/FNB_products.dart';
+import 'package:vendo/screens/product_list/complete_product_list.dart';
 import 'package:vendo/screens/product_details/product_details.dart';
-import 'package:vendo/screens/search_screen.dart';
+import 'package:vendo/screens/product_list/fashion_products.dart';
+import 'package:vendo/screens/search/search_screen.dart';
 import 'package:vendo/screens/vendo_map.dart';
 
-import '../../models/database_service.dart';
+import '../../database/database_service.dart';
 import '../../models/users.dart';
 import '../../utils/reusable_widgets.dart';
 
@@ -27,7 +29,7 @@ class HomeScreen extends StatefulWidget {
   final bool Function(Product) isFavorite;
 
   @override
-  State<StatefulWidget> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -51,7 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context) => ProductDetails(
               product: product,
               isFavorite: widget.isFavorite(product),
-              productsOnCart: widget.productsOnCart,
               onIconPressed: widget.setFavProduct,
               onAddToCart: widget.addProductToCart,
           )
@@ -73,7 +74,12 @@ class _HomeScreenState extends State<HomeScreen> {
         GestureDetector(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const SearchScreen()));
+                  builder: (context) => SearchScreen(
+                      isFavorite: widget.isFavorite,
+                      setFavProduct: widget.setFavProduct,
+                      addProductToCart: widget.addProductToCart,
+                  )
+              ));
             },
             child: Container(
               decoration: BoxDecoration(
@@ -148,13 +154,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Food & Beverages Vending Machine',
                 const Color(0xFFE6F2EA),
                 150,
-                0),
+                0,
+                () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => FNBProducts(
+                          favProducts: widget.favProducts,
+                          isProductsOnCart: widget.productsOnCart.isNotEmpty,
+                          productsOnCartCount: widget.productsOnCart.length,
+                          productsOnCart: widget.productsOnCart,
+                          addProductToCart: widget.addProductToCart,
+                          onIconTapped: widget.setFavProduct,
+                          isFavorite: widget.isFavorite,
+                          removeProductFromCart: widget.removeProductFromCart
+                      )));
+                }),
             categoryItem('images/beauty_products.png',
-                'Fashion Vending Machine', const Color(0xFFFFE9E5), 120, 7)
+                'Fashion Vending Machine', const Color(0xFFFFE9E5), 120, 7,
+                () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => FashionProducts(
+                          favProducts: widget.favProducts,
+                          isProductsOnCart: widget.productsOnCart.isNotEmpty,
+                          productsOnCartCount: widget.productsOnCart.length,
+                          productsOnCart: widget.productsOnCart,
+                          addProductToCart: widget.addProductToCart,
+                          onIconTapped: widget.setFavProduct,
+                          isFavorite: widget.isFavorite,
+                          removeProductFromCart: widget.removeProductFromCart
+                      )));
+                })
           ],
         ),
         const SizedBox(height: 40),
-        productCardHeader(context, 'Lihat Produk Kami', () {
+        productCardHeader(context, 'Lihat Produk Kami', "Produk pilihan kami", () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => CompleteProductList(
                     favProducts: widget.favProducts,
@@ -173,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
               if (snapshot.hasData) {
                 var productList = snapshot.data!;
                 return SizedBox(
-                  height: 220,
+                  height: 200,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     separatorBuilder: (context, index) => const SizedBox(
@@ -181,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     itemBuilder: (context, index) {
                       return productCard(
-                          context, productList[index], widget.productsOnCart,
+                          context, productList[index],
                           widget.isFavorite(productList[index]),
                           widget.setFavProduct, widget.addProductToCart
                       );
@@ -205,13 +237,11 @@ class _HomeScreenState extends State<HomeScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    child: Text('Lokasi Vending Machine',
-                        style: GoogleFonts.inter(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onBackground)),
-                  ),
+                  Text('Lokasi Vending Machine',
+                      style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onBackground)),
                   SizedBox(
                     width: 200,
                     child: Text('Temukan Vending Machine di sekitar anda',
@@ -305,35 +335,38 @@ Widget locationCard(BuildContext context, Location vmLocation,
 }
 
 Widget categoryItem(String imageRes, String title, Color containerColor,
-    double textWidth, double containerPadding) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Container(
-        padding: EdgeInsets.symmetric(vertical: containerPadding),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            color: containerColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 3,
-                offset: const Offset(0, 5), // changes position of shadow
-              )
-            ]),
-        child: Image.asset(imageRes, scale: 2),
-      ),
-      const SizedBox(height: 20),
-      SizedBox(
-          width: textWidth,
-          child: Text(title,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF868889))))
-    ],
+    double textWidth, double containerPadding, void Function() onCategoryTapped) {
+  return GestureDetector(
+    onTap: onCategoryTapped,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(vertical: containerPadding),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: containerColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 3,
+                  offset: const Offset(0, 5), // changes position of shadow
+                )
+              ]),
+          child: Image.asset(imageRes, scale: 2),
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+            width: textWidth,
+            child: Text(title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF868889))))
+      ],
+    )
   );
 }
 
