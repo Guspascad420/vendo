@@ -1,24 +1,30 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:randomstring_dart/randomstring_dart.dart';
+import 'package:vendo/database/database_service.dart';
 import 'package:vendo/screens/payments/payment_completed.dart';
 import 'package:vendo/utils/currency_format.dart';
 import 'package:http/http.dart' as http;
 
 import '../../models/category.dart';
+import '../../models/order.dart';
+import '../../models/product.dart';
 
 class QrisPayment extends StatefulWidget {
   const QrisPayment({super.key, required this.totalCost,
     required this.qrisImageRes, required this.transactionId,
-    required this.productCategory});
+    required this.productCategory, required this.productsOnCart});
 
   final int totalCost;
   final String qrisImageRes;
   final String transactionId;
   final Category productCategory;
+  final List<Product> productsOnCart;
 
   @override
   State<QrisPayment> createState() => _QrisPaymentState();
@@ -26,8 +32,35 @@ class QrisPayment extends StatefulWidget {
 
 class _QrisPaymentState extends State<QrisPayment> {
 
+  DatabaseService service = DatabaseService();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  final rs = RandomString();
+  String _uniqueCode = "";
+
+  Future<void> _handleCompletedPayment(String id, List<Product> productsOnCart) async {
+    for (var product in widget.productsOnCart) {
+      service.removeProductFromCart(auth.currentUser!.uid, product,
+          product.quantity!);
+    }
+    _createNewOrder();
+  }
+
+  void _createNewOrder() {
+    setState(() {
+      _uniqueCode = rs.getRandomString(lowersCount: 0, uppersCount: 3,
+          specialsCount: 0).substring(0, 4);
+    });
+    String productCategory = widget.productCategory == Category.foodOrBeverage
+        ? "F&B" : "Fashion";
+    Order order = Order(uniqueCode: _uniqueCode,
+        price: widget.totalCost, category: productCategory,
+        status: "Sukses", userId: auth.currentUser!.uid);
+    service.addOrder(order);
+  }
+
   Future<String> getStatus() async {
-    final response = await http.get(Uri.parse('http://192.168.18.42:8080/api/status/'
+    final response = await http.get(Uri.parse('https://midtrans-go-api--6h08mix.'
+        'lemonpond-99927c12.southeastasia.azurecontainerapps.io/api/status/'
         '${widget.transactionId}'));
     String status;
     if (response.statusCode == 200) {
@@ -77,18 +110,37 @@ class _QrisPaymentState extends State<QrisPayment> {
                         style: GoogleFonts.inter(
                           fontSize: 25,
                           fontWeight: FontWeight.w600,
+                        )),
+                    Container(
+                      width: MediaQuery.of(context).size.height * 0.3,
+                      margin: const EdgeInsets.only(top: 20, bottom: 10),
+                      child: Text('Salin link dibawah untuk mensimulasikan pembayaran '
+                          'pada QRIS Simulator',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                          ))
+                    ),
+                    Text(widget.qrisImageRes,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
                         ))
                   ],
                 );
               } else {
-                SchedulerBinding.instance.addPostFrameCallback((_) {
-                  Navigator.of(context).pushReplacement(
+                _handleCompletedPayment(auth.currentUser!.uid, widget.productsOnCart)
+                    .then((value) => {
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                    Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                          builder: (context) => PaymentCompleted(
-                              productCategory: widget.productCategory
-                          )
+                        builder: (context) => PaymentCompleted(
+                          productCategory: widget.productCategory,
+                          uniqueCode: _uniqueCode
+                        )
                       )
-                  );
+                    );
+                  })
                 });
               }
             } else if (snapshot.hasError) {
