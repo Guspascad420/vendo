@@ -5,12 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vendo/models/voucher.dart';
 import 'package:vendo/screens/main/home_screen.dart';
 import 'package:vendo/screens/cart/shopping_cart.dart';
+import 'package:vendo/screens/search/search_screen.dart';
 import 'package:vendo/utils/scroll_to_hide_widget.dart';
 import 'package:vendo/utils/static_grid.dart';
-import '../models/database_service.dart';
-import '../models/product.dart';
-import '../models/users.dart';
-import '../utils/reusable_widgets.dart';
+import '../../database/database_service.dart';
+import '../../models/product.dart';
+import '../../models/users.dart';
+import '../../utils/reusable_widgets.dart';
 
 class CompleteProductList extends StatefulWidget {
   const CompleteProductList(
@@ -43,10 +44,8 @@ class _CompleteProductListState extends State<CompleteProductList> {
   late Future<List<Product>> futureFoodList;
   late Future<List<Product>> futureBeverageList;
   late Future<List<Product>> futureFashionList;
-  late Future<Users> futureUserData;
   late bool _isProductsOnCart;
   late int _productsOnCartCount;
-  FirebaseAuth auth = FirebaseAuth.instance;
   bool _isVisible = true;
 
   @override
@@ -103,24 +102,34 @@ class _CompleteProductListState extends State<CompleteProductList> {
               icon: const Icon(Icons.arrow_back)
           ),
           backgroundColor: Theme.of(context).colorScheme.background,
-          title: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: const Color(0xFFE6E7E9)
-            ),
-            margin: const EdgeInsets.symmetric(vertical: 30),
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            width: 310,
-            child: Row(
-              children: [
-                const SizedBox(width: 25),
-                const Icon(Icons.search, color: Color(0xFF9CA3AF), size: 30),
-                const SizedBox(width: 5),
-                Text('Search',
-                    style: GoogleFonts.inter(
-                        fontSize: 14, color: const Color(0xFF9CA3AF)))
-              ],
-            ),
+          title: GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      SearchScreen(isFavorite: widget.isFavorite,
+                          setFavProduct: widget.onIconTapped,
+                          addProductToCart: widget.addProductToCart)
+              ));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: const Color(0xFFE6E7E9)
+              ),
+              margin: const EdgeInsets.symmetric(vertical: 30),
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              width: 310,
+              child: Row(
+                children: [
+                  const SizedBox(width: 25),
+                  const Icon(Icons.search, color: Color(0xFF9CA3AF), size: 30),
+                  const SizedBox(width: 5),
+                  Text('Search',
+                      style: GoogleFonts.inter(
+                          fontSize: 14, color: const Color(0xFF9CA3AF)))
+                ],
+              ),
+            )
           ),
           actions: [
             Image.asset('images/shopping_cart.png', scale: 2),
@@ -156,8 +165,7 @@ class _CompleteProductListState extends State<CompleteProductList> {
                             color: Theme.of(context).colorScheme.background))
                 ),
             )
-        )
-            : const SizedBox(),
+        ) : const SizedBox(),
         body: FutureBuilder(
           future: Future.wait(
               [futureFoodList, futureBeverageList, futureFashionList]),
@@ -183,42 +191,44 @@ class _CompleteProductListState extends State<CompleteProductList> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    productCardHeader(context, 'Produk Makanan Kami!', () {}),
+                    productCardHeader(context, 'Produk Makanan Kami!', "Makanan pilihan kami"),
                     StaticGrid(
                         gap: 4,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         children: [
                           for (var i = 0; i < 4; i++)
                             productCard(
-                                context, foodList[i], widget.productsOnCart,
+                                context, foodList[i],
                                 widget.isFavorite(foodList[i]),
                                 widget.onIconTapped, widget.addProductToCart,
                                 _setIsProductOnCart
                             )
                         ]),
                     const SizedBox(height: 40),
-                    productCardHeader(context, 'Produk Minuman Kami!', () {}),
+                    productCardHeader(context, 'Produk Minuman Kami!',
+                        "Minuman pilihan kami"),
                     StaticGrid(
                         gap: 4,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         children: [
                           for (var i = 0; i < 4; i++)
                             productCard(
-                                context, beverageList[i], widget.productsOnCart,
+                                context, beverageList[i],
                                 widget.isFavorite(beverageList[i]),
                                 widget.onIconTapped, widget.addProductToCart,
                                 _setIsProductOnCart
                             )
                         ]),
                     const SizedBox(height: 40),
-                    productCardHeader(context, 'Produk Fashion Kami!', () {}),
+                    productCardHeader(context, 'Produk Fashion Kami!',
+                        "Fashion pilihan kami"),
                     StaticGrid(
                         gap: 4,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         children: [
                           for (var fashionProduct in fashionList)
                             productCard(
-                                context, fashionProduct, widget.productsOnCart,
+                                context, fashionProduct,
                                 widget.isFavorite(fashionProduct),
                                 widget.onIconTapped, widget.addProductToCart,
                                 _setIsProductOnCart
