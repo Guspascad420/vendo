@@ -14,7 +14,7 @@ class ProfileScreen extends StatefulWidget {
   final Future<Users> futureUserData;
 
   @override
-  State<StatefulWidget> createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
