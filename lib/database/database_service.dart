@@ -42,6 +42,14 @@ class DatabaseService {
   addUserReview(Review review) async {
     await db.collection("reviews").add(review.toMap());
   }
+  
+  Future<List<Product>> retrieveSearchResults(String query) async {
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+    await db.collection("products").where("name", isEqualTo: query).get();
+    return snapshot.docs
+        .map((docSnapshot) => Product.fromDocumentSnapshot(docSnapshot))
+        .toList();
+  } 
 
   Future<List<Review>> retrieveDummyReviews() async {
     QuerySnapshot<Map<String, dynamic>> snapshot =
@@ -77,6 +85,14 @@ class DatabaseService {
     DocumentSnapshot<Map<String, dynamic>> snapshot =
         await db.collection("users").doc(id).get();
     return Users.fromDocumentSnapshot(snapshot);
+  }
+
+  Future<List<order_data.Order>> retrieveOrders(String userId) async {
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+    await db.collection("orders").where("user_id", isEqualTo: userId).get();
+    return snapshot.docs
+        .map((docSnapshot) => order_data.Order.fromDocumentSnapshot(docSnapshot))
+        .toList();
   }
 
   Future<List<Product>> retrieveFourProducts() async {
