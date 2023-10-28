@@ -8,7 +8,7 @@ class UMKMOnboarding extends StatefulWidget {
   const UMKMOnboarding({super.key});
 
   @override
-  State<StatefulWidget> createState() => _UMKMOnboardingState();
+  State<UMKMOnboarding> createState() => _UMKMOnboardingState();
 
 }
 
