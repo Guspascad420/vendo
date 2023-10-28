@@ -32,7 +32,7 @@ class Product {
   }
 
   Map<String, dynamic> toFavMap() {
-    return {'id': id, 'name': name, 'price': price, 'image_res': imageRes};
+    return {'id': id, 'name': name, 'price': price, 'image_res': imageRes, 'weight': weight};
   }
 
   Map<String, dynamic> toCartMap(int quantity) {
