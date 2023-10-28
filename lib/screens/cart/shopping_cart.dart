@@ -20,7 +20,7 @@ class ShoppingCart extends StatefulWidget {
   final void Function(Product)? afterProductRemoved;
 
   @override
-  State<StatefulWidget> createState() => _ShoppingCartState();
+  State<ShoppingCart> createState() => _ShoppingCartState();
 }
 
 class _ShoppingCartState extends State<ShoppingCart> {
@@ -49,7 +49,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
               builder: (context) =>
                   PaymentScreen(subtotal: _subtotal, valueAddedTax: _valueAddedTax,
                       totalCost: _totalCost, isVoucherEnabled: _isVoucherEnabled,
-                      discountPrice: _discountPrice, productCategory: productCategory)
+                      discountPrice: _discountPrice, productCategory: productCategory,
+                      productsOnCart: widget.productsOnCart)
           )
       );
     }
