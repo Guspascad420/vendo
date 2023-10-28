@@ -3,22 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:randomstring_dart/randomstring_dart.dart';
 import 'package:vendo/models/category.dart';
-import 'package:vendo/models/database_service.dart';
+import 'package:vendo/database/database_service.dart';
 import 'package:vendo/screens/vendo_map.dart';
 
 import '../main/main_screen.dart';
 
 class PaymentCompleted extends StatefulWidget {
-  const PaymentCompleted({super.key, required this.productCategory});
+  const PaymentCompleted({super.key, required this.productCategory,
+    required this.uniqueCode});
 
   final Category productCategory;
+  final String uniqueCode;
 
   @override
   State<PaymentCompleted> createState() => _PaymentCompletedState();
 }
 
 class _PaymentCompletedState extends State<PaymentCompleted> {
-  final rs = RandomString();
   DatabaseService service = DatabaseService();
   FirebaseAuth auth = FirebaseAuth.instance;
   String _uniqueCode = "";
@@ -27,11 +28,10 @@ class _PaymentCompletedState extends State<PaymentCompleted> {
   @override
   void initState() {
     setState(() {
-      _uniqueCode = rs.getRandomString(lowersCount: 0, uppersCount: 3,
-          specialsCount: 0);
       _productCategory = widget.productCategory == Category.foodOrBeverage
           ? "F&B" : "Fashion";
     });
+
     super.initState();
   }
 
@@ -71,13 +71,11 @@ class _PaymentCompletedState extends State<PaymentCompleted> {
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
-                    _uniqueCode != ""
-                        ? Text(_uniqueCode.substring(0, 4),
+                    Text(widget.uniqueCode,
                         style: GoogleFonts.montserrat(
                             fontSize: 61,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF2A4399)))
-                        : const SizedBox(height: 10),
+                            color: const Color(0xFF2A4399))),
                     const SizedBox(height: 15),
                     Text('Tukarkan kode unik ini di Vendo Machine F&B terdekat kamu ya!',
                         textAlign: TextAlign.center,
