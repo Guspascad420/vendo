@@ -5,16 +5,17 @@ class Order {
   final String uniqueCode;
   final int price;
   final String status;
+  final String category;
   final String userId;
 
-  Order({this.id, required this.uniqueCode, required this.price,
+  Order({this.id, required this.uniqueCode, required this.category, required this.price,
     required this.status, required this.userId});
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'unique_code': uniqueCode,
       'price': price,
+      'category': category,
       'status': status,
       'user_id': userId
     };
@@ -24,6 +25,7 @@ class Order {
     : id = doc.id,
       uniqueCode = doc.data()!["unique_code"],
       price = doc.data()!["price"],
+      category = doc.data()!["category"],
       status = doc.data()!["status"],
       userId = doc.data()!["user_id"];
 }
