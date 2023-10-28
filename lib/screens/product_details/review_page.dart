@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vendo/models/database_service.dart';
+import 'package:vendo/database/database_service.dart';
 import 'package:vendo/screens/product_details/create_review.dart';
 
 import '../../models/product.dart';
