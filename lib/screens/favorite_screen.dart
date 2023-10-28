@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vendo/models/database_service.dart';
+import 'package:vendo/database/database_service.dart';
 import 'package:vendo/screens/cart/shopping_cart.dart';
 import '../models/product.dart';
 import '../models/users.dart';
@@ -19,7 +19,7 @@ class FavoriteScreen extends StatefulWidget {
   final void Function(Product, int) onAddToCart;
 
   @override
-  State<StatefulWidget> createState() => _FavoriteScreenState();
+  State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vendo/models/database_service.dart';
+import 'package:vendo/database/database_service.dart';
 import 'package:vendo/models/users.dart';
 
 import '../utils/reusable_widgets.dart';
@@ -80,7 +80,7 @@ class _AboutMeState extends State<AboutMe> {
           centerTitle: true
       ),
       bottomNavigationBar: GestureDetector(
-        onTap: _handleBioChanges,
+        onTap: () {},
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 22),
           color: const Color(0xFF2A4399),

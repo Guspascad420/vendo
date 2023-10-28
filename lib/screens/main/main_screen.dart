@@ -9,14 +9,14 @@ import 'package:vendo/screens/main/order_history.dart';
 import 'package:vendo/screens/main/profile_screen.dart';
 import 'package:vendo/screens/cart/shopping_cart.dart';
 
-import '../../models/database_service.dart';
+import '../../database/database_service.dart';
 import '../../models/product.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
@@ -205,6 +205,7 @@ PreferredSizeWidget homeAppBar(BuildContext context, List<Product> favProducts,
 
 PreferredSizeWidget orderHistoryAppBar(BuildContext context) {
   return AppBar(
+      toolbarHeight: 80,
       surfaceTintColor: Colors.white,
       title: Text('Riwayat Pemesanan',
           style: GoogleFonts.inter(

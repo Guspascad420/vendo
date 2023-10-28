@@ -2,20 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vendo/models/database_service.dart';
+import 'package:vendo/database/database_service.dart';
 import 'package:vendo/screens/product_details/review_page.dart';
 import 'package:vendo/utils/currency_format.dart';
 import '../../models/product.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails(
-      {super.key, required this.product, required this.productsOnCart,
+      {super.key, required this.product,
         required this.onIconPressed, required this.onAddToCart,
         required this.isFavorite, this.setIsProductOnCart});
 
   final Product product;
   final bool isFavorite;
-  final List<Product> productsOnCart;
   final void Function(Product) onIconPressed;
   final void Function(Product, int) onAddToCart;
   final void Function()? setIsProductOnCart;
@@ -276,9 +275,12 @@ Widget productDetailsHeader(
 Widget productDetailsBody(String productDescription) {
   return Expanded(
       child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         width: double.infinity,
         color: const Color(0xFFF4F5F9),
-        child: Text(productDescription,
+        child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam '
+            'dictum massa lorem, sit amet pulvinar arcu imperdiet mollis. '
+            'Duis sed elementum magna. Vivamus eget est tortor. Morbi dolor dolor,',
         style: GoogleFonts.inter(fontSize: 15, color: const Color(0xFF868889))),
   ));
 }
