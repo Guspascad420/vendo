@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vendo/models/users.dart';
 import 'package:vendo/screens/auth/forget_password.dart';
 import 'package:vendo/screens/main/main_screen.dart';
 import 'package:vendo/utils/reusable_widgets.dart';
 
-import '../../models/database_service.dart';
+import '../../database/database_service.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -96,7 +97,7 @@ class AuthBottomSheet extends StatefulWidget {
   final String activeContent;
 
   @override
-  State<StatefulWidget> createState() => _AuthBottomSheetState();
+  State<AuthBottomSheet> createState() => _AuthBottomSheetState();
 }
 
 class _AuthBottomSheetState extends State<AuthBottomSheet> {
@@ -196,7 +197,7 @@ class CreateAccount extends StatefulWidget {
   const CreateAccount({super.key});
 
   @override
-  State<StatefulWidget> createState() => _CreateAccountState();
+  State<CreateAccount> createState() => _CreateAccountState();
 }
 
 class _CreateAccountState extends State<CreateAccount> {
@@ -215,8 +216,21 @@ class _CreateAccountState extends State<CreateAccount> {
   DatabaseService service = DatabaseService();
   bool _isEmailValid = true;
   bool _isPasswordValid = true;
-  bool _isPhoneNumberValid = false;
+  bool _isPhoneNumberValid = true;
   bool _isLoading = false;
+
+  Future<UserCredential> _signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    return await auth.signInWithCredential(credential);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -269,6 +283,8 @@ class _CreateAccountState extends State<CreateAccount> {
           'Nomor telepon',
           style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
         ),
+        const SizedBox(height: 10),
+        reusablePhoneTextField("Contoh: 082918282911", _phoneTextController),
         _isPhoneNumberValid
             ? const SizedBox()
             : Container(
@@ -278,8 +294,7 @@ class _CreateAccountState extends State<CreateAccount> {
                   textAlign: TextAlign.right,
                   style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
                 )
-              ),
-        reusablePhoneTextField("Contoh: 082918282911", _phoneTextController),
+            ),
         const SizedBox(height: 30),
         ElevatedButton(
             onPressed: _passwordTextController.text.isEmpty ||
@@ -353,7 +368,26 @@ class _CreateAccountState extends State<CreateAccount> {
                         color: Theme.of(context).colorScheme.background))),
         const SizedBox(height: 10),
         ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              _signInWithGoogle().then((value) {
+                var user = Users(
+                    fullName: value.user!.displayName!,
+                    email: value.user!.email!,
+                    productsOnCart: [],
+                    favProducts: [],
+                    phoneNumber: ""
+                );
+                service.createNewUser(user, value.user!.uid);
+                setState(() {
+                  _isLoading = false;
+                });
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const MainScreen()),
+                        (route) => false);
+              });
+            },
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFF4F4F4),
                 shape: RoundedRectangleBorder(
@@ -396,7 +430,7 @@ class _LoginState extends State<Login> {
   bool _isError = false;
   bool _isLoading = false;
 
-  checkAuthentication() async {
+  void _checkAuthentication() async {
     auth.authStateChanges().listen((user) {
       if (user != null) {
         Navigator.pushAndRemoveUntil(
@@ -461,8 +495,8 @@ class _LoginState extends State<Login> {
                     try {
                       await auth.signInWithEmailAndPassword(email: _emailTextController.text,
                           password: _passwordTextController.text);
-                      checkAuthentication();
-                    } on FirebaseAuthException catch (e) {
+                      _checkAuthentication();
+                    } on FirebaseAuthException {
                       setState(() {
                         _isLoading = false;
                         _isError = true;
