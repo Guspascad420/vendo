@@ -276,7 +276,7 @@ class _VendoMapState extends State<VendoMap> {
       bottomNavigationBar: Container(
         height: MediaQuery.of(context).size.height * 0.27,
         margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).colorScheme.onPrimary,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

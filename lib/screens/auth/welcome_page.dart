@@ -16,6 +16,7 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,7 +57,9 @@ class WelcomePage extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0)),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 60, vertical: 15)),
+                        horizontal: 60, vertical: 15
+                    ),
+                ),
                 child: Text('Buat Akun',
                     style: GoogleFonts.inter(
                       fontSize: 18,
@@ -122,7 +125,7 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.onPrimary,
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(25.0),
                   topRight: Radius.circular(25.0))),
@@ -150,7 +153,8 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
               Expanded(
                   child: _activeContent == 'Buat Akun'
                       ? const CreateAccount()
-                      : const Login())
+                      : const Login()
+              )
             ],
           ),
         ));
@@ -250,7 +254,8 @@ class _CreateAccountState extends State<CreateAccount> {
         ),
         const SizedBox(height: 10),
         reusableTextField(
-            "Contoh : namaemail@emailkamu.com", false, _emailTextController),
+            "Contoh : namaemail@emailkamu.com", false, _emailTextController
+        ),
         _isEmailValid
             ? const SizedBox()
             : Container(
@@ -389,7 +394,7 @@ class _CreateAccountState extends State<CreateAccount> {
               });
             },
             style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF4F4F4),
+                backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 padding: const EdgeInsets.symmetric(vertical: 12)),
@@ -426,6 +431,20 @@ class _LoginState extends State<Login> {
   final TextEditingController _emailTextController = TextEditingController();
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  DatabaseService service = DatabaseService();
+
+  Future<UserCredential> _signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    return await auth.signInWithCredential(credential);
+  }
 
   bool _isError = false;
   bool _isLoading = false;
@@ -518,6 +537,45 @@ class _LoginState extends State<Login> {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.background))),
+        const SizedBox(height: 10),
+        ElevatedButton(
+            onPressed: () {
+              _signInWithGoogle().then((value) {
+                var user = Users(
+                    fullName: value.user!.displayName!,
+                    email: value.user!.email!,
+                    productsOnCart: [],
+                    favProducts: [],
+                    phoneNumber: ""
+                );
+                service.createNewUser(user, value.user!.uid);
+                setState(() {
+                  _isLoading = false;
+                });
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const MainScreen()),
+                        (route) => false);
+              });
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                padding: const EdgeInsets.symmetric(vertical: 12)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('images/ic_google.png', scale: 2.5),
+                const SizedBox(width: 20),
+                Text('Login dengan Google',
+                    style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF2A4399))),
+              ],
+            )),
         Padding(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom))

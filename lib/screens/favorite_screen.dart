@@ -95,9 +95,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBar(
           toolbarHeight: 80,
-          leading: const Icon(Icons.arrow_back),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back)
+          ),
           surfaceTintColor: Colors.white,
           title: Text('Favorit',
               style: GoogleFonts.inter(

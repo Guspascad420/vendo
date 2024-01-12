@@ -23,6 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBar(
         toolbarHeight: 70,
         leading: IconButton(
@@ -31,7 +32,7 @@ class _SearchScreenState extends State<SearchScreen> {
             },
             icon: const Icon(Icons.arrow_back)
         ),
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
         title: Container(
           margin: const EdgeInsets.symmetric(vertical: 5),
           child: TextField(

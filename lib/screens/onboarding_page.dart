@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -49,7 +50,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     ? const Icon(Icons.arrow_forward, color: Color(0xFF2A4399))
                     : const SizedBox(width: 22)
               ],
-            )),
+            )
+        ),
         body: PageView(
           controller: controller,
           children: [
@@ -61,7 +63,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 svgAsset: 'images/tracking_maps.svg',
                 svgMarginTop: 80,
                 svgMarginBottom: 105,
-                onButtonPressed: () { }),
+                onButtonPressed: () { }
+            ),
             OnboardingContent(
                 title: 'Select Local Products',
                 description: 'Sekarang kamu bisa membeli lokal produk dari '

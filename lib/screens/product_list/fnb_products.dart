@@ -78,6 +78,7 @@ class _FNBProductsState extends State<FNBProducts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
         extendBody: true,
         appBar: AppBar(
           surfaceTintColor: Colors.white,
@@ -87,7 +88,7 @@ class _FNBProductsState extends State<FNBProducts> {
               },
               icon: const Icon(Icons.arrow_back)
           ),
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           title: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
@@ -106,11 +107,7 @@ class _FNBProductsState extends State<FNBProducts> {
                         fontSize: 14, color: const Color(0xFF9CA3AF)))
               ],
             ),
-          ),
-          actions: [
-            Image.asset('images/shopping_cart.png', scale: 2),
-            const SizedBox(width: 10)
-          ],
+          )
         ),
       bottomNavigationBar: _isProductsOnCart
           ? ScrollToHideWidget(
@@ -148,7 +145,7 @@ class _FNBProductsState extends State<FNBProducts> {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
+              return Text('Mohon cek koneksi internet kamu');
             }
             var foodList = snapshot.data![0];
             var beverageList = snapshot.data![1];

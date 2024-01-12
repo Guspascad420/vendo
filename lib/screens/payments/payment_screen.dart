@@ -44,7 +44,8 @@ class _PaymentMethodState extends State<PaymentScreen> {
       _isLoading = true;
     });
     http.post(
-      Uri.parse('https://midtrans-go-api--6h08mix.lemonpond-99927c12.southeastasia.azurecontainerapps.io/api/charge'),
+      Uri.parse('https://midtrans-go-api.lemonpond-99927c12.southeastasia.azure'
+          'containerapps.io/api/charge'),
       body: jsonEncode(<String, dynamic> {
         'payment_type': _method.name,
         'gross_amount': 30000
@@ -88,7 +89,9 @@ class _PaymentMethodState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           toolbarHeight: 80,
           leading: IconButton(
               onPressed: () {

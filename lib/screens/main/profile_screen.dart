@@ -43,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           );
         } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
+          return Text('Mohon cek koneksi internet kamu');
         }
         return const Center(
           child: CircularProgressIndicator()

@@ -92,6 +92,7 @@ class _CompleteProductListState extends State<CompleteProductList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
         extendBody: true,
         appBar: AppBar(
           surfaceTintColor: Colors.white,
@@ -101,7 +102,7 @@ class _CompleteProductListState extends State<CompleteProductList> {
               },
               icon: const Icon(Icons.arrow_back)
           ),
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           title: GestureDetector(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
@@ -130,11 +131,7 @@ class _CompleteProductListState extends State<CompleteProductList> {
                 ],
               ),
             )
-          ),
-          actions: [
-            Image.asset('images/shopping_cart.png', scale: 2),
-            const SizedBox(width: 10)
-          ],
+          )
         ),
         bottomNavigationBar: _isProductsOnCart
             ? ScrollToHideWidget(
@@ -173,7 +170,7 @@ class _CompleteProductListState extends State<CompleteProductList> {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
+              return Text('Mohon cek koneksi internet kamu');
             }
             var foodList = snapshot.data![0];
             var beverageList = snapshot.data![1];

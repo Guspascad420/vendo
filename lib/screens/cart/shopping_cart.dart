@@ -167,7 +167,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
     });
   }
 
-
   void _applyOrRemoveVoucher() {
     if (_subtotal >= _vouchers[_selectedVoucherIndex].minimumOrder) {
       setState(() {
@@ -237,7 +236,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         _subtotal = _priceList.reduce((a, b) => a + b);
         _valueAddedTax = _subtotal * 0.11;
         _totalCost = _subtotal + _valueAddedTax.toInt() + 1000;
-        //12100
+        _initialTotalCost = _totalCost;
       }
       else {
         _subtotal = 0;
@@ -245,6 +244,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
         _valueAddedTax = 0;
       }
     });
+    if (_selectedVoucherIndex != 20) {
+      _applyOrRemoveVoucher();
+    }
   }
 
   @override
@@ -285,8 +287,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       extendBody: true,
       appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           toolbarHeight: 80,
           leading: IconButton(
               onPressed: () {

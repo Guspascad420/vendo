@@ -22,7 +22,6 @@ class PaymentCompleted extends StatefulWidget {
 class _PaymentCompletedState extends State<PaymentCompleted> {
   DatabaseService service = DatabaseService();
   FirebaseAuth auth = FirebaseAuth.instance;
-  String _uniqueCode = "";
   String _productCategory = "";
 
   @override

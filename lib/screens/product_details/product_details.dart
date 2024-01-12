@@ -77,6 +77,7 @@ class _ProductDetailsState extends State<ProductDetails>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBar(
           leading:  IconButton(
             onPressed: () {

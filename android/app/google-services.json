@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "635158928930",
+    "project_id": "vando-22877",
+    "storage_bucket": "vando-22877.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:635158928930:android:73c4d080bbb2c0e5eab47b",
+        "android_client_info": {
+          "package_name": "com.example.vando"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "635158928930-m11dmcf37odbt5fam36vhl9jgfuapeis.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vando",
+            "certificate_hash": "9ee9fa4f2f3867b6e06f0c26b1a835bda0bc9d77"
+          }
+        },
+        {
+          "client_id": "635158928930-2c84ujgpuhlsb7r9r95tmm5ut3srnt3p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTCBkifquBhgDWShrhqfNrNKLVCEUn0Kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "635158928930-2c84ujgpuhlsb7r9r95tmm5ut3srnt3p.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "635158928930-t9jvmdb62l0lfh73divdijens3fv141p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.vando"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

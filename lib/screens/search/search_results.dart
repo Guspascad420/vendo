@@ -36,7 +36,7 @@ class _SearchResultsState extends State<SearchResults> {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
+            return Text('Mohon cek koneksi internet kamu');
           }
           return GridView.count(
               padding: const EdgeInsets.symmetric(horizontal: 10),

@@ -36,7 +36,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                   color: Color(0xFF2A4399)
             ));
           } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
+            return Text('Mohon cek koneksi internet kamu');
           }
           List<Order> orders = snapshot.data!;
           if (orders.isEmpty) {

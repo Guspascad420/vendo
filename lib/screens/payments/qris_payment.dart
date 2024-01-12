@@ -35,7 +35,6 @@ class _QrisPaymentState extends State<QrisPayment> {
   DatabaseService service = DatabaseService();
   FirebaseAuth auth = FirebaseAuth.instance;
   final rs = RandomString();
-  String _uniqueCode = "";
 
   Future<void> _handleCompletedPayment(String id, List<Product> productsOnCart) async {
     for (var product in widget.productsOnCart) {
@@ -46,21 +45,27 @@ class _QrisPaymentState extends State<QrisPayment> {
   }
 
   void _createNewOrder() {
-    setState(() {
-      _uniqueCode = rs.getRandomString(lowersCount: 0, uppersCount: 3,
+    var uniqueCode = rs.getRandomString(lowersCount: 0, uppersCount: 3,
           specialsCount: 0).substring(0, 4);
-    });
     String productCategory = widget.productCategory == Category.foodOrBeverage
         ? "F&B" : "Fashion";
-    Order order = Order(uniqueCode: _uniqueCode,
+    Order order = Order(uniqueCode: uniqueCode,
         price: widget.totalCost, category: productCategory,
         status: "Sukses", userId: auth.currentUser!.uid);
     service.addOrder(order);
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) => PaymentCompleted(
+                productCategory: widget.productCategory,
+                uniqueCode: uniqueCode
+            )
+        )
+    );
   }
 
   Future<String> getStatus() async {
-    final response = await http.get(Uri.parse('https://midtrans-go-api--6h08mix.'
-        'lemonpond-99927c12.southeastasia.azurecontainerapps.io/api/status/'
+    final response = await http.get(Uri.parse('https://midtrans-go-api.lemonpond-'
+        '99927c12.southeastasia.azurecontainerapps.io/api/status/'
         '${widget.transactionId}'));
     String status;
     if (response.statusCode == 200) {
@@ -79,7 +84,9 @@ class _QrisPaymentState extends State<QrisPayment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
         appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.onPrimary,
             toolbarHeight: 80,
             leading: IconButton(
                 onPressed: () {
@@ -121,7 +128,7 @@ class _QrisPaymentState extends State<QrisPayment> {
                             fontSize: 12,
                           ))
                     ),
-                    Text(widget.qrisImageRes,
+                    SelectableText(widget.qrisImageRes,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.inter(
                           fontSize: 12,
@@ -129,22 +136,12 @@ class _QrisPaymentState extends State<QrisPayment> {
                   ],
                 );
               } else {
-                _handleCompletedPayment(auth.currentUser!.uid, widget.productsOnCart)
-                    .then((value) => {
-                  SchedulerBinding.instance.addPostFrameCallback((_) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => PaymentCompleted(
-                          productCategory: widget.productCategory,
-                          uniqueCode: _uniqueCode
-                        )
-                      )
-                    );
-                  })
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  _handleCompletedPayment(auth.currentUser!.uid, widget.productsOnCart);
                 });
               }
             } else if (snapshot.hasError) {
-              return Text('${snapshot.error}',
+              return Text('Mohon cek koneksi internet kamu',
                   style: GoogleFonts.inter(
                     fontSize: 25,
                     fontWeight: FontWeight.w600,

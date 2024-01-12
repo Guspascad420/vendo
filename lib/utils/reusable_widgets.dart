@@ -125,12 +125,14 @@ Widget productCard(BuildContext context, Product product,
               onAddToCart: onAddToCart, setIsProductOnCart: setIsProductOnCart)));
     },
     child: Card(
-        surfaceTintColor: Theme.of(context).colorScheme.background,
+        surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+        color: Theme.of(context).colorScheme.onPrimary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           //set border radius more than 50% of height and width to make circle
         ),
         child: Container(
+          color: Theme.of(context).colorScheme.onPrimary,
           width: 145,
           margin: const EdgeInsets.all(14),
           child: Wrap(

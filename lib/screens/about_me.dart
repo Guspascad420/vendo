@@ -25,33 +25,66 @@ class _AboutMeState extends State<AboutMe> {
   final validEmail = RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
   );
+  final validPassword = RegExp(r"^(?=.*[0-9]).{8,}$");
   final validPhoneNumber = RegExp(r"^(\+62|62|0)8[1-9][0-9]{6,9}$");
   DatabaseService service = DatabaseService();
   FirebaseAuth auth = FirebaseAuth.instance;
   bool _isEmailValid = true;
   bool _isPhoneNumberValid = true;
+  bool _isPasswordNotMatch = false;
+  bool _isCurrentPasswordNotMatch = false;
+  bool _isPasswordValid = true;
 
   void _handleBioChanges() {
-    validEmail.hasMatch(_emailTextController.text)
-        ? setState(() {
-            _isEmailValid = true;
-          })
-        : setState(() {
-            _isEmailValid = false;
-          });
-    validPhoneNumber.hasMatch(_phoneTextController.text)
-        ? setState(() {
-            _isPhoneNumberValid = true;
-          })
-        : setState(() {
-            _isPhoneNumberValid = false;
-          });
+    setState(() {
+      _isEmailValid = validEmail.hasMatch(_emailTextController.text) ? true : false;
+      _isPhoneNumberValid = validPhoneNumber.hasMatch(_phoneTextController.text)
+          ? true : false;
+    });
     if (_isEmailValid && _fullNameTextController.text.isNotEmpty && _isPhoneNumberValid) {
       service.updateUserBio(auth.currentUser!.uid,
           _fullNameTextController.text, _emailTextController.text,
           _phoneTextController.text);
     }
+    if (_confirmPassTextController.text.isNotEmpty 
+        || _currentPassTextController.text.isNotEmpty 
+        || _newPassTextController.text.isNotEmpty) {
+      if (_newPassTextController.text != _confirmPassTextController.text) {
+        setState(() {
+          _isPasswordNotMatch = true;
+        });
+        return;
+      }
+      if (!validPassword.hasMatch(_newPassTextController.text)) {
+        setState(() {
+          _isPasswordValid = false;
+        });
+        return;
+      }
+      _reauthenticateUser();
+      if (_isCurrentPasswordNotMatch) {
+        return;
+      }
+    }
     Navigator.pop(context);
+  }
+
+  void _reauthenticateUser() async {
+    try {
+      await auth.currentUser!.reauthenticateWithCredential(
+          EmailAuthProvider.credential(email: auth.currentUser!.email!,
+              password: _currentPassTextController.text)
+      );
+      setState(() {
+        _isCurrentPasswordNotMatch = false;
+      });
+      auth.currentUser!.updatePassword(_newPassTextController.text);
+    } on FirebaseAuthException {
+      setState(() {
+        _isCurrentPasswordNotMatch = true;
+      });
+      return;
+    }
   }
 
   @override
@@ -68,8 +101,10 @@ class _AboutMeState extends State<AboutMe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           leading: const Icon(Icons.arrow_back),
           surfaceTintColor: Colors.white,
           title: Text('Tentang Saya',
@@ -80,7 +115,7 @@ class _AboutMeState extends State<AboutMe> {
           centerTitle: true
       ),
       bottomNavigationBar: GestureDetector(
-        onTap: () {},
+        onTap: _handleBioChanges,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 22),
           color: const Color(0xFF2A4399),
@@ -139,6 +174,16 @@ class _AboutMeState extends State<AboutMe> {
                   reusableTextFieldWithIcon("Password saat ini", true, _currentPassTextController,
                       const Icon(Icons.lock_outline),
                       const Color(0xFF314797), 2),
+                  _isCurrentPasswordNotMatch
+                      ? Container(
+                            margin: const EdgeInsets.only(top: 7),
+                            child: Text(
+                              'Password tidak sesuai',
+                              textAlign: TextAlign.right,
+                              style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
+                            )
+                        )
+                      : const SizedBox(),
                   const SizedBox(height: 10),
                   reusableTextFieldWithIcon(
                       "Password Baru", true, _newPassTextController,
@@ -150,6 +195,26 @@ class _AboutMeState extends State<AboutMe> {
                       _confirmPassTextController,
                       const Icon(Icons.lock_outline), const Color(0xFF314797), 2),
                   const SizedBox(height: 10),
+                  _isPasswordNotMatch
+                      ? Container(
+                            margin: const EdgeInsets.only(top: 7),
+                            child: Text(
+                              'Mohon Cocokkan kata sandi kamu',
+                              textAlign: TextAlign.right,
+                              style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
+                            )
+                        )
+                      : const SizedBox(),
+                  _isPasswordValid
+                      ? const SizedBox()
+                      : Container(
+                            margin: const EdgeInsets.only(top: 7),
+                            child: Text(
+                              'Password minimal 8 Karakter & mengandung angka',
+                              textAlign: TextAlign.right,
+                              style: GoogleFonts.inter(fontSize: 12, color: Colors.red),
+                            )
+                        )
                 ],
               ),
             )

@@ -42,6 +42,17 @@ class DatabaseService {
   addUserReview(Review review) async {
     await db.collection("reviews").add(review.toMap());
   }
+
+  Future<bool> checkRegisteredEmail(String email) async {
+    var aggregateResult = await db.collection("users").
+    where("email", isEqualTo: email).count().get();
+
+    var count = aggregateResult.count;
+    if (count == 0) {
+      return false;
+    }
+    return true;
+  }
   
   Future<List<Product>> retrieveSearchResults(String query) async {
     QuerySnapshot<Map<String, dynamic>> snapshot =
@@ -77,7 +88,7 @@ class DatabaseService {
     });
   }
 
-  addOrder(order_data.Order order) async {
+  Future<void> addOrder(order_data.Order order) async {
     await db.collection("orders").add(order.toMap());
   }
 

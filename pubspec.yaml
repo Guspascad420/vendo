@@ -52,6 +52,20 @@ dependencies:
   webview_flutter: ^4.4.1
   randomstring_dart: ^0.0.4
   google_sign_in: ^6.1.5
+  flutter_otp_text_field: ^1.1.1
+  flutter_native_splash: ^2.3.4
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#000000"
+  image: images/icon_vendo.png
+  branding: images/icon_vendo.png
+
+  android_12:
+    image: images/icon_vendo.png
+    icon_background_color: "#ffffff"
+    image_dark: images/icon_vendo.png
+    icon_background_color_dark: "#121212"
 
 dev_dependencies:
   flutter_test:

@@ -13,12 +13,14 @@ import '../../database/database_service.dart';
 import '../../models/product.dart';
 
 class EWalletPayment extends StatefulWidget {
-  const EWalletPayment({super.key,
+  const EWalletPayment({
+    super.key,
       required this.totalCost,
       required this.deeplinkRedirect,
       required this.transactionId,
       required this.productCategory,
-      required this.productsOnCart});
+      required this.productsOnCart
+  });
 
   final int totalCost;
   final String deeplinkRedirect;
@@ -35,27 +37,33 @@ class _EWalletPaymentState extends State<EWalletPayment> {
   final rs = RandomString();
   DatabaseService service = DatabaseService();
   FirebaseAuth auth = FirebaseAuth.instance;
-  String _uniqueCode = "";
 
   Future<void> _handleCompletedPayment(String id, List<Product> productsOnCart) async {
     for (var product in widget.productsOnCart) {
-      service.removeProductFromCart(auth.currentUser!.uid, product,
+      await service.removeProductFromCart(auth.currentUser!.uid, product,
           product.quantity!);
     }
     _createNewOrder();
   }
 
   void _createNewOrder() {
-    setState(() {
-      _uniqueCode = rs.getRandomString(lowersCount: 0, uppersCount: 3,
-          specialsCount: 0).substring(0, 4);
-    });
+    var uniqueCode = rs.getRandomString(lowersCount: 0, uppersCount: 3,
+        specialsCount: 0).substring(0, 4);
     String productCategory = widget.productCategory == Category.foodOrBeverage
         ? "F&B" : "Fashion";
-    Order order = Order(uniqueCode: _uniqueCode,
+    Order order = Order(uniqueCode: uniqueCode,
         price: widget.totalCost, category: productCategory,
         status: "Sukses", userId: auth.currentUser!.uid);
-    service.addOrder(order);
+    service.addOrder(order).then((value) => {
+      Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => PaymentCompleted(
+                productCategory: widget.productCategory,
+                uniqueCode: uniqueCode,
+              )
+          )
+      )
+    });
   }
 
 
@@ -68,28 +76,23 @@ class _EWalletPaymentState extends State<EWalletPayment> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) {
-            http.get(Uri.parse('https://midtrans-go-api--6h08mix.lemonpond-99927c12.'
-                'southeastasia.azurecontainerapps.io/api/status/'
+            if (request.url.startsWith("https://midtrans.com/")) {
+              Future.delayed(const Duration(seconds: 3), () {
+                http.get(Uri.parse('https://midtrans-go-api.lemonpond-99927c12.south'
+                    'eastasia.azurecontainerapps.io/api/status/'
                     '${widget.transactionId}')).then((response) {
-              if (response.statusCode == 200) {
-                var data = jsonDecode(response.body) as Map<String, dynamic>;
-                if (data["status"] == "settlement") {
-                  _handleCompletedPayment(auth.currentUser!.uid, widget.productsOnCart)
-                      .then((value) => {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => PaymentCompleted(
-                          productCategory: widget.productCategory,
-                          uniqueCode: _uniqueCode,
-                        )
-                      )
-                    )
-                  });
-                }
-              } else {
-                throw Exception('Failed to post request');
-              }
-            });
+                  if (response.statusCode == 200) {
+                    var data = jsonDecode(response.body) as Map<String, dynamic>;
+                    if (data["status"] == "settlement") {
+                      _handleCompletedPayment(auth.currentUser!.uid, widget.productsOnCart);
+                    }
+                  } else {
+                    throw Exception('Failed to post request');
+                  }
+                });
+              });
+              return NavigationDecision.prevent;
+            }
             return NavigationDecision.navigate;
           },
         ),
@@ -116,7 +119,9 @@ class _EWalletPaymentState extends State<EWalletPayment> {
               )),
           centerTitle: true
       ),
-      body: WebViewWidget(controller: _controller),
+      body: WebViewWidget(
+          controller: _controller,
+      ),
     );
   }
 }

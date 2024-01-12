@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
+                return const Text('Mohon cek koneksi internet kamu');
               }
               return const Center(
                 child: CircularProgressIndicator(),
@@ -222,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
+                return const Text('Mohon cek koneksi internet kamu');
               }
               return const Center(
                 child: CircularProgressIndicator(),
@@ -290,7 +290,8 @@ Widget locationCard(BuildContext context, Location vmLocation,
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
     child: Card(
-      surfaceTintColor: Colors.white,
+      surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+      color: Theme.of(context).colorScheme.onPrimary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         //set border radius more than 50% of height and width to make circle

@@ -86,7 +86,7 @@ class _ReviewPageState extends State<ReviewPage> {
                     return reviewContent(reviews[index]);
                   });
             } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
+              return Text('Mohon cek koneksi internet kamu');
             }
             return const Center(
               child: CircularProgressIndicator(color: Color(0xFF2A4399)),

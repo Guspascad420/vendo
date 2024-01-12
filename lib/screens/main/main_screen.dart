@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vendo/models/users.dart';
@@ -119,15 +120,17 @@ class _MainScreenState extends State<MainScreen> {
     ];
 
     return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
         appBar: appBarWidgetOptions.elementAt(_selectedIndex),
         bottomNavigationBar: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(30), topLeft: Radius.circular(30)),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                     color: Colors.black38, spreadRadius: 0, blurRadius: 10),
               ],
+              color: Theme.of(context).colorScheme.onPrimary
             ),
             child: ClipRRect(
               borderRadius: const BorderRadius.only(
@@ -135,6 +138,7 @@ class _MainScreenState extends State<MainScreen> {
                 topRight: Radius.circular(30.0),
               ),
               child: BottomNavigationBar(
+                backgroundColor: Theme.of(context).colorScheme.onPrimary,
                 showSelectedLabels: false,
                 showUnselectedLabels: false,
                 items: [
@@ -171,9 +175,9 @@ PreferredSizeWidget homeAppBar(BuildContext context, List<Product> favProducts,
     void Function(Product, int) addProductToCart) {
   return AppBar(
     toolbarHeight: 70,
-    surfaceTintColor: Colors.white,
     leading: const SizedBox(),
-    backgroundColor: Theme.of(context).colorScheme.background,
+    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+    surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
     centerTitle: true,
     title: Image.asset('images/logo_vendo_1.png', scale: 7),
     actions: [
@@ -206,7 +210,8 @@ PreferredSizeWidget homeAppBar(BuildContext context, List<Product> favProducts,
 PreferredSizeWidget orderHistoryAppBar(BuildContext context) {
   return AppBar(
       toolbarHeight: 80,
-      surfaceTintColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
       title: Text('Riwayat Pemesanan',
           style: GoogleFonts.inter(
               fontSize: 20,
@@ -217,7 +222,8 @@ PreferredSizeWidget orderHistoryAppBar(BuildContext context) {
 
 PreferredSizeWidget profileAppBar(BuildContext context) {
   return AppBar(
-      surfaceTintColor: Colors.white,
+      surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       title: Text('Profil',
           style: GoogleFonts.inter(
               fontSize: 20,

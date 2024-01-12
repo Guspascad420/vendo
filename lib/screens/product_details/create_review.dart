@@ -4,8 +4,6 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vendo/database/database_service.dart';
 import 'package:vendo/models/review.dart';
-import 'package:vendo/screens/main/main_screen.dart';
-import 'package:vendo/screens/product_details/review_page.dart';
 import '../../models/product.dart';
 import '../../models/users.dart';
 
@@ -47,7 +45,9 @@ class _CreateReviewState extends State<CreateReview> {
                 icon: const Icon(Icons.arrow_back)
             )
         ),
-      bottomNavigationBar: Wrap(
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        child: Wrap(
           alignment: WrapAlignment.center,
           children: [
             ElevatedButton(
@@ -71,9 +71,9 @@ class _CreateReviewState extends State<CreateReview> {
                         color: Theme.of(context).colorScheme.background
                     ))
             ),
-            const SizedBox(height: 20)
           ],
-        ),
+        )
+      ),
       body: Center(
         child: Column(
           children: [
@@ -106,6 +106,7 @@ class _CreateReviewState extends State<CreateReview> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
+               controller: _descriptionTextController,
                keyboardType: TextInputType.multiline,
                maxLines: null,
                decoration: InputDecoration(
