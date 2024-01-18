@@ -78,8 +78,7 @@ class _EWalletPaymentState extends State<EWalletPayment> {
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.startsWith("https://midtrans.com/")) {
               Future.delayed(const Duration(seconds: 3), () {
-                http.get(Uri.parse('https://midtrans-go-api.lemonpond-99927c12.south'
-                    'eastasia.azurecontainerapps.io/api/status/'
+                http.get(Uri.parse('https://midtrans-go-api-3oobx6gbjq-as.a.run.app/api/status/'
                     '${widget.transactionId}')).then((response) {
                   if (response.statusCode == 200) {
                     var data = jsonDecode(response.body) as Map<String, dynamic>;

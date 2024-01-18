@@ -7,7 +7,6 @@ import 'package:vendo/screens/payments/ewallet_payment.dart';
 import 'package:vendo/screens/payments/qris_payment.dart';
 import 'package:vendo/utils/reusable_widgets.dart';
 import 'package:http/http.dart' as http;
-
 import '../../models/category.dart';
 import '../../models/product.dart';
 
@@ -44,8 +43,7 @@ class _PaymentMethodState extends State<PaymentScreen> {
       _isLoading = true;
     });
     http.post(
-      Uri.parse('https://midtrans-go-api.lemonpond-99927c12.southeastasia.azure'
-          'containerapps.io/api/charge'),
+      Uri.parse('https://midtrans-go-api-3oobx6gbjq-as.a.run.app/api/charge'),
       body: jsonEncode(<String, dynamic> {
         'payment_type': _method.name,
         'gross_amount': 30000

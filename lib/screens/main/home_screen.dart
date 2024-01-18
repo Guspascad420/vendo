@@ -439,7 +439,7 @@ Widget promotionalCardContent(
                   alignment: AlignmentDirectional.centerEnd,
                   margin: const EdgeInsets.only(right: 10),
                   child: Image.network(
-                    "https://guspascad.blob.core.windows.net/democontainer/"
+                    "https://storage.googleapis.com/vendo/"
                         "${product.imageRes}",
                     scale: 2.4,
                   )))

@@ -77,7 +77,7 @@ class _CreateReviewState extends State<CreateReview> {
       body: Center(
         child: Column(
           children: [
-            Image.network("https://guspascad.blob.core.windows.net/democontainer/"
+            Image.network("https://storage.googleapis.com/vendo/"
                 "${widget.product.imageRes}", scale: 1.2),
             Text(widget.product.name,
                 style: GoogleFonts.inter(fontSize: 25,

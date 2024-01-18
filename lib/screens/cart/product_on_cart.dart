@@ -139,7 +139,7 @@ class _ProductOnCartState extends State<ProductOnCart> {
                 decoration: const BoxDecoration(
                     shape: BoxShape.circle, color: Colors.white),
                 child: Image.network(
-                  'https://guspascad.blob.core.windows.net/democontainer/'
+                  'https://storage.googleapis.com/vendo/'
                       '${widget.product.imageRes}',
                   scale: 5,
                 ),

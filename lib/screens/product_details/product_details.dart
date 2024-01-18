@@ -11,7 +11,8 @@ class ProductDetails extends StatefulWidget {
   const ProductDetails(
       {super.key, required this.product,
         required this.onIconPressed, required this.onAddToCart,
-        required this.isFavorite, this.setIsProductOnCart});
+        required this.isFavorite, this.setIsProductOnCart}
+      );
 
   final Product product;
   final bool isFavorite;
@@ -164,7 +165,7 @@ class _ProductDetailsState extends State<ProductDetails>
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 115),
                 child: Image.network(
-                    'https://guspascad.blob.core.windows.net/democontainer/'
+                    'https://storage.googleapis.com/vendo/'
                         '${widget.product.imageRes}'),
               ),
               productDetailsHeader(

@@ -202,7 +202,7 @@ Widget productOnFavorite(Product product, void Function(Product) onDeletePressed
               decoration: const BoxDecoration(
                   shape: BoxShape.circle, color: Colors.white),
               child: Image.network(
-                'https://guspascad.blob.core.windows.net/democontainer/'
+                'https://storage.googleapis.com/vendo/'
                     '${product.imageRes}',
                 scale: 5,
               ),

@@ -142,7 +142,7 @@ Widget productCard(BuildContext context, Product product,
                 width: double.infinity,
                 child: Center(
                     child: Image.network(
-                        'https://guspascad.blob.core.windows.net/democontainer/'
+                        'https://storage.googleapis.com/vendo/'
                             '${product.imageRes}',
                         scale: 2.2)),
               ),

@@ -64,8 +64,7 @@ class _QrisPaymentState extends State<QrisPayment> {
   }
 
   Future<String> getStatus() async {
-    final response = await http.get(Uri.parse('https://midtrans-go-api.lemonpond-'
-        '99927c12.southeastasia.azurecontainerapps.io/api/status/'
+    final response = await http.get(Uri.parse('https://midtrans-go-api-3oobx6gbjq-as.a.run.app/api/status/'
         '${widget.transactionId}'));
     String status;
     if (response.statusCode == 200) {
