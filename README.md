@@ -1,23 +1,23 @@
 # 🧃 Vendo – Your Pocket Vending Machine
 
-**Vendo** is a mobile app designed to connect local businesses (UMKM) with customers through smart vending machines. It’s all about giving small sellers a platform to flex their products and making it hella easy for buyers to cop what they want, when they want.
+**Vendo** is a mobile app designed to connect local businesses (UMKM) with customers through smart vending machines. It’s all about giving small vendors a platform to flex their products and making it hella easy for buyers to cop what they want, when they want.
 
 ## 💡 What’s Vendo All About?
 
 Vendo isn’t your average vending machine experience – we’re leveling it up by going mobile. This app lets you:
 
-- Discover and browse products from local UMKM sellers
+- Discover and browse products from local UMKM vendors
 - Pay directly from your phone using **QRIS, ShopeePay, GoPay, or OVO**
-- Earn special promos after your **3rd purchase** (but just that one time, so don’t get too comfy 😏)
+- Earn special promos after your **3rd purchase**
 
-It’s built for both **sellers** and **buyers**, creating a win-win space:
-- Sellers get better reach and vending machine integration
+It’s built for both **vendors** and **buyers**, creating a win-win space:
+- Vendors get better reach and vending machine integration
 - Buyers get speed, ease, and convenience all in one app
 
 ## 📱 Why Mobile?
 
-Because phones are life, duh. The mobile platform makes everything:
-- Fast AF ⚡️
+The mobile platform makes everything:
+- Lightning Fast ⚡️
 - Easy to use anytime, anywhere 📍
 - Smooth and optimized 🧈
 
