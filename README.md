@@ -1,5 +1,35 @@
-# vendo
+# 🧃 Vendo – Your Pocket Vending Machine
 
-Vendo merupakan aplikasi yang dirancang dan dibangun untuk memenuhi kebutuhan UMKM dalam memasarkan produknya yang terhubung melalui vending machine. Aplikasi ini akan dikembangkan pada platform mobile. Platform mobile memungkinkan pelayanan yang cepat, interaksi user yang fleksibel, dan optimasi secara terstruktur. Vendo dapat digunakan oleh penjual dan pembeli dimana mereka dapat menerima banyak manfaatnya. Pembeli dapat melihat produk UMKM yang mereka inginkan melalui aplikasi, melakukan
-pembayaran melalui Qris, Shopeepay, Gopay, dan Ovo. Selain itu pembeli dapat memperoleh promo ketika telah 3 kali melakukan pembelian melalui aplikasi Vendo tidak berlaku setelahnya.
+**Vendo** is a mobile app designed to connect local businesses (UMKM) with customers through smart vending machines. It’s all about giving small sellers a platform to flex their products and making it hella easy for buyers to cop what they want, when they want.
 
+## 💡 What’s Vendo All About?
+
+Vendo isn’t your average vending machine experience – we’re leveling it up by going mobile. This app lets you:
+
+- Discover and browse products from local UMKM sellers
+- Pay directly from your phone using **QRIS, ShopeePay, GoPay, or OVO**
+- Earn special promos after your **3rd purchase** (but just that one time, so don’t get too comfy 😏)
+
+It’s built for both **sellers** and **buyers**, creating a win-win space:
+- Sellers get better reach and vending machine integration
+- Buyers get speed, ease, and convenience all in one app
+
+## 📱 Why Mobile?
+
+Because phones are life, duh. The mobile platform makes everything:
+- Fast AF ⚡️
+- Easy to use anytime, anywhere 📍
+- Smooth and optimized 🧈
+
+## 🎯 Core Features
+
+- 🔍 Product discovery from vending machines around you
+- 💸 Secure and quick in-app payment with popular e-wallets
+- 🎁 One-time reward promo after 3 purchases
+- 👥 Dual-mode access: buyer and seller functionality
+- 📊 Analytics & sales tracking (for sellers)
+
+## 🚀 Who’s It For?
+
+- **UMKM Owners** – Get your products out there without needing a physical store.
+- **Everyday Buyers** – Grab your fave local snacks or products from vending machines using just your phone.
